@@ -1,0 +1,21 @@
+components_by_slot:
+  slot_1:
+  - components:
+    - layout_properties: {grid_position: 'KLPGKU,GSZUQP'}
+      name: image_1
+      properties: {border_radius: 50px}
+      type: Image
+    - layout_properties: {grid_position: 'LMEXCO,VIQYOT'}
+      name: label_2
+      properties: {text: 'Name: '}
+      type: Label
+    - layout_properties: {grid_position: 'LMEXCO,VGLTDD'}
+      name: label_1
+      properties: {text: ''}
+      type: Label
+    layout_properties: {}
+    name: outlined_card_1
+    properties: {col_widths: '{"VIQYOT":10,"VGLTDD":50}', role: outlined-card}
+    type: ColumnPanel
+is_package: true
+layout: {type: 'form:Anvil_page'}

@@ -1,5 +1,43 @@
 components_by_slot:
-  slot_1: []
+  slot_1:
+  - layout_properties: {}
+    name: spacer_1
+    properties: {height: 101.60000610351562}
+    type: Spacer
+  - components:
+    - components:
+      - name: label_1
+        properties: {align: center, border: '', icon: '', role: title, text: Translate Tools}
+        type: Label
+      layout_properties: {col_xs: 1, row: KKAKDH, width_xs: 10}
+      name: linear_panel_1
+      properties: {}
+      type: LinearPanel
+    - layout_properties: {col_xs: 0, row: CRJJPL, width_xs: 5}
+      name: drop_down_1
+      properties: {}
+      type: DropDown
+    - layout_properties: {col_xs: 5, row: CRJJPL, width_xs: 1}
+      name: button_1
+      properties: {align: left, icon: de, text: h}
+      type: Button
+    - layout_properties: {col_xs: 7, row: CRJJPL, width_xs: 5}
+      name: drop_down_2
+      properties: {}
+      type: DropDown
+    - layout_properties: {col_xs: 0, row: TECRSS, width_xs: 5}
+      name: text_area_1
+      properties: {}
+      type: TextArea
+    - layout_properties: {col_xs: 7, row: TECRSS, width_xs: 5}
+      name: rich_text_1
+      properties: {}
+      type: RichText
+    data_bindings: []
+    layout_properties: {full_width_row: false}
+    name: grid_panel_1
+    properties: {background: 'theme:Primary Container', border: 100px}
+    type: GridPanel
   slot_2: []
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

@@ -41,13 +41,5 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     open_form('Profile')
 
 
-  augment.set_event_handler(self.lbl_title, 'hover', self.lbl_title_hover)
-  # equivalent to
-  # augment.set_event_handler(self.link, 'mouseenter', self.link_hover)
-  # augment.set_event_handler(self.link, 'mouseleave', self.link_hover)
-  # or
-  # augment.set_event_handler(self.link, 'mouseenter mouseleave', self.link_hover)
-  
-  def lbl_title_hover(self, **event_args):
-    self.lbl_title.bold = 'enter' in event_args['event_type']
+
     

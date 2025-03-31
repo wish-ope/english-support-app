@@ -1,8 +1,9 @@
 components_by_slot:
   slot_1:
-  - layout_properties: {}
+  - event_bindings: {reset: canvas_1_reset}
+    layout_properties: {}
     name: canvas_1
-    properties: {height: 24}
+    properties: {height: 100}
     type: Canvas
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

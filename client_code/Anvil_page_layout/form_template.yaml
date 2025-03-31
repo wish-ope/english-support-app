@@ -1,11 +1,11 @@
 components:
 - components:
   - event_bindings: {click: logout_button_click}
+    layout_properties: {}
     name: logout_button
-    properties: {text: Logout}
+    properties: {role: elevated-button, text: Logout}
     type: Button
   - event_bindings: {click: login_button_click}
-    layout_properties: {}
     name: login_button
     properties: {role: outlined-button, text: Login Account}
     type: Button
@@ -14,9 +14,9 @@ components:
   properties: {}
   type: FlowPanel
 - components:
-  - event_bindings: {click: button_1_click}
+  - event_bindings: {click: about_us_btn_click}
     layout_properties: {grid_position: 'QFWVMS,SUDAJH'}
-    name: button_1
+    name: about_us_btn
     properties: {icon: 'fa:user-circle', icon_align: right, text: About Us}
     type: Button
   - event_bindings: {click: profile_button_click}
@@ -46,8 +46,4 @@ slots:
   slot_1:
     index: 0
     set_layout_properties: {grid_position: 'KORYBW,XQDBCV'}
-    target: {name: content_panel, type: container}
-  slot_2:
-    index: 0
-    set_layout_properties: {grid_position: 'CURVST,NXLCHC'}
     target: {name: content_panel, type: container}

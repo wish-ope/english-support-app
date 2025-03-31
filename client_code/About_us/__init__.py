@@ -12,3 +12,9 @@ class About_us(About_usTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run before the form opens.
+
+  def login_btn_about_us_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    anvil.users.login_with_form()
+    open_form('Form2')
+   

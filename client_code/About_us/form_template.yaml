@@ -4,5 +4,6 @@ components_by_slot:
     name: label_1
     properties: {text: hi this is about us}
     type: Label
+  slot_2: []
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

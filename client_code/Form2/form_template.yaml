@@ -5,4 +5,4 @@ components_by_slot:
     properties: {height: 24}
     type: Canvas
 is_package: true
-layout: {type: 'form:Anvil_page'}
+layout: {type: 'form:Anvil_page_layout'}

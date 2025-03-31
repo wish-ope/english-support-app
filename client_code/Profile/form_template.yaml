@@ -18,4 +18,4 @@ components_by_slot:
     properties: {col_widths: '{"VIQYOT":10,"VGLTDD":50}', role: outlined-card}
     type: ColumnPanel
 is_package: true
-layout: {type: 'form:Anvil_page'}
+layout: {type: 'form:Anvil_page_layout'}

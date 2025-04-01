@@ -28,16 +28,16 @@ components:
   name: column_panel_1
   properties: {}
   type: ColumnPanel
-- data_bindings: []
-  layout_properties: {slot: title}
-  name: label_1
-  properties: {align: center, foreground: 'theme:On Primary Container', italic: false, role: headline, text: English Support, underline: false}
-  type: Label
 - components: []
   layout_properties: {slot: default}
   name: content_panel
   properties: {col_widths: '{}'}
   type: ColumnPanel
+- event_bindings: {click: button_2_click}
+  layout_properties: {slot: title}
+  name: button_2
+  properties: {text: English Support}
+  type: Button
 container:
   properties: {html: '@theme:standard-page.html'}
   type: HtmlTemplate

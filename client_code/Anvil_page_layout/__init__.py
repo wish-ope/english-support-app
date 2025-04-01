@@ -40,6 +40,14 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     """This method is called when the button is clicked"""
     open_form('Profile')
 
+  def button_2_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    open_form('Form2')
+
+  def link_1_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    
+
 
 
     

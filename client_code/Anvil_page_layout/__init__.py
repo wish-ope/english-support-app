@@ -35,7 +35,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def about_us_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('About_us')
-    self.login_button.visible = False
+    # self.login_button.visible = False
 
   def profile_button_click(self, **event_args):
     """This method is called when the button is clicked"""

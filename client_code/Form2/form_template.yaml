@@ -26,7 +26,7 @@ components_by_slot:
         icon_align: top
         spacing:
           margin: [null, null, null, null]
-          padding: [null, 0, null, 58]
+          padding: [null, 0, null, 15]
         text: ''
       type: Button
     - layout_properties: {col_xs: 7, row: CRJJPL, width_xs: 5}

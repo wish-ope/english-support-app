@@ -27,9 +27,10 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def logout_button_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.users.logout()
+    # show login btn and hide logout btn
     self.login_button.visible = True
     self.logout_button.visible = False 
-    open_form('Form2')
+    open_form('Home_page')
     anvil.alert("Log Out")
 
   def about_us_btn_click(self, **event_args):
@@ -41,12 +42,11 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     """This method is called when the button is clicked"""
     open_form('Profile')
 
-  def button_2_click(self, **event_args):
+  def home_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
-    open_form('Form2')
+    open_form('Home_page')
 
-  def link_1_click(self, **event_args):
-    """This method is called when the link is clicked"""
+ 
     
 
 

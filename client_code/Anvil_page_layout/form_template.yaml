@@ -33,9 +33,9 @@ components:
   name: content_panel
   properties: {col_widths: '{}'}
   type: ColumnPanel
-- event_bindings: {click: button_2_click}
+- event_bindings: {click: home_btn_click}
   layout_properties: {slot: title}
-  name: button_2
+  name: home_btn
   properties: {text: English Support}
   type: Button
 container:

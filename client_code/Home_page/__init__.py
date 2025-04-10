@@ -1,4 +1,4 @@
-from ._anvil_designer import Form2Template
+from ._anvil_designer import Home_pageTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 
 
-class Form2(Form2Template):
+class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

@@ -1,2 +1,15 @@
+components_by_slot:
+  slot_1:
+  - components:
+    - name: repeating_panel_1
+      properties: {item_template: NoteBook.RowTemplate1}
+      type: RepeatingPanel
+    layout_properties: {}
+    name: data_grid_1
+    properties:
+      columns:
+      - {data_key: column_1, id: JKSDUP, title: Vocab}
+      - {data_key: column_2, id: VJQQOR, title: Means}
+    type: DataGrid
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

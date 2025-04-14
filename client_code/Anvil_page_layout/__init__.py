@@ -46,6 +46,10 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     """This method is called when the button is clicked"""
     open_form('Home_page')
 
+  def notebook_btn_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    open_form('NoteBook')
+
  
     
 

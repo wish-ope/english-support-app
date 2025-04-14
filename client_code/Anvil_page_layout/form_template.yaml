@@ -14,15 +14,20 @@ components:
   properties: {}
   type: FlowPanel
 - components:
+  - event_bindings: {click: notebook_btn_click}
+    layout_properties: {grid_position: 'HYCYUK,KHKDIL'}
+    name: notebook_btn
+    properties: {icon: 'fa:book', icon_align: right, text: 'NoteBook '}
+    type: Button
+  - event_bindings: {click: profile_button_click}
+    layout_properties: {grid_position: 'XRUVVY,MBJTHR'}
+    name: profile_button
+    properties: {background: '', foreground: '', icon: 'fa:address-book', icon_align: right, role: null, text: Profile}
+    type: Button
   - event_bindings: {click: about_us_btn_click}
     layout_properties: {grid_position: 'QFWVMS,SUDAJH'}
     name: about_us_btn
     properties: {icon: 'fa:user-circle', icon_align: right, text: About Us}
-    type: Button
-  - event_bindings: {click: profile_button_click}
-    layout_properties: {grid_position: 'UBTRUO,DFEYUM'}
-    name: profile_button
-    properties: {background: '', foreground: '', icon: 'fa:address-book', icon_align: right, role: null, text: Profile}
     type: Button
   layout_properties: {slot: left-nav}
   name: column_panel_1

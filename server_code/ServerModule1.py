@@ -4,8 +4,6 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 
-
-
 @anvil.server.callable
 def add_vocab(vocab_data):
   app_tables.vocab.add_row(Vocab=vocab_data["vocab_input"], Means=vocab_data["means_input"])

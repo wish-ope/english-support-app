@@ -5,7 +5,7 @@ components_by_slot:
       properties: {item_template: NoteBook.RowTemplate1}
       type: RepeatingPanel
     layout_properties: {}
-    name: vocab_data_grid
+    name: vocab_data_table
     properties:
       columns:
       - {data_key: Vocab, id: PGKZTT, title: Vocab}

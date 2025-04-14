@@ -21,11 +21,15 @@ components_by_slot:
       name: drop_down_2
       properties: {}
       type: DropDown
-    - layout_properties: {col_xs: 0, row: TECRSS, width_xs: 5}
-      name: text_area_1
+    - data_bindings:
+      - {code: 'self.item[''Vocab'']', property: text, writeback: true}
+      event_bindings: {change: input_text_change}
+      layout_properties: {col_xs: 0, row: TECRSS, width_xs: 5}
+      name: input_text
       properties: {}
       type: TextArea
-    - layout_properties: {col_xs: 7, row: TECRSS, width_xs: 5}
+    - data_bindings: []
+      layout_properties: {col_xs: 7, row: TECRSS, width_xs: 5}
       name: rich_text_1
       properties: {}
       type: RichText
@@ -34,6 +38,11 @@ components_by_slot:
     name: grid_panel_1
     properties: {background: 'theme:Primary Container', border: 100px}
     type: GridPanel
+  - event_bindings: {click: add_btn_click}
+    layout_properties: {}
+    name: add_btn
+    properties: {text: Add Vocab}
+    type: Button
   slot_2: []
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

@@ -3,6 +3,13 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+
+
+
+@anvil.server.callable
+def add_vocab(Vocab):
+  if Vocab.get('Vocab') and Vocab.get('Means'):
+    app_tables.vocab.add_row(**Vocab)
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

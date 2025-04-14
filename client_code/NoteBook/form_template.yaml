@@ -5,11 +5,11 @@ components_by_slot:
       properties: {item_template: NoteBook.RowTemplate1}
       type: RepeatingPanel
     layout_properties: {}
-    name: data_grid_1
+    name: vocab_data_grid
     properties:
       columns:
-      - {data_key: column_1, id: JKSDUP, title: Vocab}
-      - {data_key: column_2, id: VJQQOR, title: Means}
+      - {data_key: Vocab, id: PGKZTT, title: Vocab}
+      - {data_key: Means, id: IRMYLR, title: Means}
     type: DataGrid
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

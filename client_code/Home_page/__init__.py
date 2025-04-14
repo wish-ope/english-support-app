@@ -11,12 +11,13 @@ class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-    # Any code you write here will run before the form opens.
+    # If user is logged in, display the add button
     current_user = anvil.users.get_user()
     if current_user == None:
       self.add_btn.visible = False
     else:
       self.add_btn.visible = True
+      
   def input_text_change(self, **event_args):
     """This method is called when the text in this text area is edited"""
     vocab_input = self.input_text.text

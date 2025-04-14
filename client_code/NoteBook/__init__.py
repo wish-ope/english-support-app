@@ -11,5 +11,6 @@ class NoteBook(NoteBookTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
+    #Displaying vocab data in grid table
     self.repeating_panel_1.items = app_tables.vocab.search()
-    # Any code you write here will run before the form opens.
+

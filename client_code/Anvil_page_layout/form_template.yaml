@@ -36,10 +36,10 @@ components:
 - event_bindings: {click: home_btn_click}
   layout_properties: {slot: title}
   name: home_btn
-  properties: {text: English Support}
+  properties: {icon: 'fa:envira', text: English Support}
   type: Button
 container:
-  properties: {html: '@theme:standard-page.html'}
+  properties: {html: '@theme:standard-page.html', visible: true}
   type: HtmlTemplate
 is_package: true
 slots:

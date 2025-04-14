@@ -22,7 +22,7 @@ components_by_slot:
       properties: {}
       type: DropDown
     - data_bindings:
-      - {code: 'self.item[''Vocab'']', property: text, writeback: true}
+      - {code: 'self.item[''vocab_grid'']', property: text, writeback: true}
       event_bindings: {change: input_text_change}
       layout_properties: {col_xs: 0, row: TECRSS, width_xs: 5}
       name: input_text
@@ -30,7 +30,7 @@ components_by_slot:
       type: TextArea
     - data_bindings: []
       layout_properties: {col_xs: 7, row: TECRSS, width_xs: 5}
-      name: rich_text_1
+      name: output_text
       properties: {}
       type: RichText
     data_bindings: []

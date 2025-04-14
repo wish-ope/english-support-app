@@ -7,9 +7,8 @@ import anvil.server
 
 
 @anvil.server.callable
-def add_vocab(Vocab):
-  if Vocab.get('Vocab') and Vocab.get('Means'):
-    app_tables.vocab.add_row(**Vocab)
+def add_vocab(grid_panel_1):
+  app_tables.vocab.add_row(Vocab=grid_panel_1["V"])
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

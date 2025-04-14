@@ -5,7 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-f
+
 
 class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
@@ -19,7 +19,8 @@ class Home_page(Home_pageTemplate):
   def add_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.server.call('add_vocab')
-    self.
+    self.refresh_data_bindings()
+    
     
 
 

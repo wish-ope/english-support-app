@@ -11,7 +11,6 @@ class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-    self.add_btn.visible = False
     # Any code you write here will run before the form opens.
 
   def input_text_change(self, **event_args):

@@ -3,40 +3,36 @@ db_schema:
   users:
     client: none
     columns:
-    - admin_ui: {order: 0, width: 200}
+    - admin_ui: {width: 200}
       name: email
       type: string
-    - admin_ui: {order: 1, width: 200}
+    - admin_ui: {width: 200}
       name: enabled
       type: bool
-    - admin_ui: {order: 2, width: 200}
+    - admin_ui: {width: 200}
       name: last_login
       type: datetime
-    - admin_ui: {order: 3, width: 200}
+    - admin_ui: {width: 200}
       name: password_hash
       type: string
-    - admin_ui: {order: 4, width: 200}
+    - admin_ui: {width: 200}
       name: n_password_failures
       type: number
-    - admin_ui: {order: 5, width: 200}
+    - admin_ui: {width: 200}
       name: confirmed_email
       type: bool
-    - admin_ui: {order: 6, width: 200}
+    - admin_ui: {width: 200}
       name: signed_up
       type: datetime
-    - admin_ui: {order: -1, width: 200}
-      name: Column8
-      target: vocab
-      type: link_multiple
     server: full
     title: Users
   vocab:
     client: search
     columns:
-    - admin_ui: {order: 0, width: 200}
+    - admin_ui: {width: 200}
       name: Vocab
       type: string
-    - admin_ui: {order: 1, width: 200}
+    - admin_ui: {width: 200}
       name: Means
       type: string
     server: full

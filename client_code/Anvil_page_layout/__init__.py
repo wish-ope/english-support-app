@@ -40,7 +40,6 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.hide_user_bth()
     self.login_button.visible = True
     self.logout_button.visible = False 
-    self.notebook_btn.visible = True
     open_form('Home_page')
     anvil.alert("Log Out")
 

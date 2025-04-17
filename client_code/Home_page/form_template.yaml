@@ -6,21 +6,14 @@ components_by_slot:
     type: Spacer
   - components:
     - components:
-      - name: label_1
-        properties: {align: center, border: '', icon: '', role: title, text: Translate Tools}
+      - layout_properties: {}
+        name: label_1
+        properties: {align: center, border: '', icon: 'fa:search', icon_align: right, role: title, text: 'Search '}
         type: Label
       layout_properties: {col_xs: 1, row: KKAKDH, width_xs: 10}
       name: linear_panel_1
       properties: {}
       type: LinearPanel
-    - layout_properties: {col_xs: 0, row: CRJJPL, width_xs: 5}
-      name: drop_down_1
-      properties: {}
-      type: DropDown
-    - layout_properties: {col_xs: 7, row: CRJJPL, width_xs: 5}
-      name: drop_down_2
-      properties: {}
-      type: DropDown
     - data_bindings: []
       event_bindings: {change: input_text_change}
       layout_properties: {col_xs: 0, row: TECRSS, width_xs: 5}

@@ -31,6 +31,7 @@ class Home_page(Home_pageTemplate):
     anvil.server.call('add_vocab',self.new_vocab_data)
     alert("Add Successful!!!")
 
+
     
     
 

@@ -2,6 +2,11 @@
  This CSS implements the Material Design 3 look and feel for Anvil apps.
  **/
 
+/* Placeholder css*/
+.placeholder{
+  color: rgba(0, 0, 0, 0.2);
+  height: 100px;
+}
 /* Stop panel-cols cutting off drop shadows */
 .anvil-panel-col {
   padding-bottom: 10px;
@@ -431,7 +436,7 @@ color: %color:On Primary Container%;
 .app-bar > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
 .app-bar > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
 .app-bar > .title { float: left; }
-.app-bar > .title > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0; display:none; }
+.app-bar > .title > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0; display:none;  }
 .app-bar > .app-bar-nav { float: right; font-weight: normal; }
 .app-bar > .app-bar-nav .placeholder { margin-top: 8px; padding: 0 8px; }
 .anvil-highlight .app-bar > .app-bar-nav .placeholder { outline: 1px dotted #ccc; }
@@ -822,7 +827,8 @@ input.anvil-component::-moz-placeholder, textarea.anvil-component::-moz-placehol
   color: %color:On Surface%;
 }
 input.anvil-component::placeholder, textarea.anvil-component::placeholder  {
-  color: %color:On Surface%;
+  /* color: %color:On Surface%; */
+  color: rgba(0, 0, 0, 0.2);
 }
 
 .app-bar input.anvil-component::-webkit-input-placeholder, .app-bar textarea.anvil-component::-webkit-input-placeholder {

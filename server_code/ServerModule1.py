@@ -14,36 +14,44 @@ nlp.add_pipe("spacy_wordnet", after='tagger')
 @anvil.server.callable
 def add_vocab(vocab_data):
   app_tables.vocab.add_row(Vocab=vocab_data["vocab_input"], Means=vocab_data["means_input"])
-doc = nlp("dog")
-# for token in doc:
-#      print(token.text, token.lemma_, token.pos_,token._.wordnet.synsets(),
-#      token._.wordnet.lemmas()
-#            )
-
-for synset in doc[0]._.wordnet.synsets():
-    print('Definition: ' + synset.definition())
+# doc = nlp("dog")
+# for synset in doc[0]._.wordnet.synsets():
+#     print('Definition: ' + synset.definition())
     
-    # Kiểm tra xem có ví dụ hay không
-    examples = synset.examples()
-    print('Total Example: ' + str(len(examples)))
-    if examples:  # Nếu danh sách ví dụ không rỗng
-        print('Example: ' + examples[0])
-    else:
-        print('Example: No examples available')
+#     # Kiểm tra xem có ví dụ hay không
+#     examples = synset.examples()
+#     print('Total Example: ' + str(len(examples)))
+#     if examples:  # Nếu danh sách ví dụ không rỗng
+#         print('Example: ' + examples[0])
+#     else:
+#         print('Example: No examples available')
     
-    # In các lemma (từ đồng nghĩa)
-    for lemma in synset.lemma_names():
-        print('Synonym: ' + lemma)
+#     # In các lemma (từ đồng nghĩa)
+#     for lemma in synset.lemma_names():
+#         print('Synonym: ' + lemma)
   
-# This is a server module. It runs on the Anvil server,
-# rather than in the user's browser.
-#
-# To allow anvil.server.call() to call functions here, we mark
-# them with @anvil.server.callable.
-# Here is an example - you can replace it with your own:
-#
-# @anvil.server.callable
-# def say_hello(name):
-#   print("Hello, " + name + "!")
-#   return 42
-#
+  doc = nlp(word.strip())
+    
+    # Thu thập kết quả vào một chuỗi
+  result = []
+  for synset in doc[0]._.wordnet.synsets():
+        result.append(f"Definition: {synset.definition()}")
+        examples = synset.examples()
+        result.append(f"Total Example: {len(examples)}")
+        if examples:
+            result.append(f"Example: {examples[0]}")
+        else:
+            result.append("Example: No examples available")
+        
+        # Thêm synonyms
+        for lemma in synset.lemma_names():
+            result.append(f"Synonym: {lemma}")
+        
+        result.append("")  # Thêm dòng trống giữa các synsets
+    
+    # Nếu không có synset, trả về thông báo
+  if not result:
+        return f"No synsets found for the word '{word}'."
+    
+    # Kết hợp tất cả kết quả thành một chuỗi
+  return "\n".join(result)

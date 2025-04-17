@@ -31,7 +31,8 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     """This method is called when the button is clicked"""
     anvil.users.logout()
     # show login btn and hide logout btn
-    
+    self.notebook_btn.visible = False
+    self.profile_btn.visible = False
     self.login_button.visible = True
     self.logout_button.visible = False 
     self.notebook_btn.visible = True
@@ -43,7 +44,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     open_form('About_us')
     # self.login_button.visible = False
 
-  def profile_button_click(self, **event_args):
+  def profile_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('Profile')
 

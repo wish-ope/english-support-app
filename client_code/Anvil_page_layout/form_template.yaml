@@ -19,9 +19,9 @@ components:
     name: notebook_btn
     properties: {icon: 'fa:book', icon_align: right, text: 'NoteBook '}
     type: Button
-  - event_bindings: {click: profile_button_click}
+  - event_bindings: {click: profile_btn_click}
     layout_properties: {grid_position: 'XRUVVY,MBJTHR'}
-    name: profile_button
+    name: profile_btn
     properties: {background: '', foreground: '', icon: 'fa:address-book', icon_align: right, role: null, text: Profile}
     type: Button
   - event_bindings: {click: about_us_btn_click}

@@ -12,30 +12,25 @@ nlp = en_core_web_sm.load()
 nlp.add_pipe("spacy_wordnet", after='tagger')
 
 @anvil.server.callable
-def get_word_info(word):
-    if not word or not word.strip():
+def get_word_info(vocab_input):
+    if not vocab_input or not vocab_input.strip():
         return "Error: Please enter a valid word."
     
-doc = nlp(word.strip())
-result = []
-for synset in doc[0]._.wordnet.synsets():
-    result.append('Definition: ' + synset.definition())
+    doc = nlp(vocab_input.strip())
+    result = []
+    for synset in doc[0]._.wordnet.synsets():
+        result.append(f"Definition: {synset.definition()}")
+        examples = synset.examples()
+        result.append(f"Total Example: {len(examples)}")
+        if examples:
+            result.append(f"Example: {examples[0]}")
+        else:
+            result.append(f"Example: No examples available")
+        for lemma in synset.lemma_names():
+            result.append(f"Synonym: {lemma}")
+        result.append("")
     
-    # Kiểm tra xem có ví dụ hay không
-    examples = synset.examples()
-    result.append('Total Example: ' + str(len(examples)))
-    if examples:  # Nếu danh sách ví dụ không rỗng
-        result.append('Example: ' + examples[0])
-    else:
-        result.append('Example: No examples available')
+    if not result:
+        return f"No synsets found for the word '{vocab_input}'."
     
-    # In các lemma (từ đồng nghĩa)
-    for lemma in synset.lemma_names():
-       result.append('Synonym: ' + lemma)
-    result.append("")
-  # Nếu không có synset, trả về thông báo
-if not result:
-        return f"No synsets found for the word '{word}'."
-    
-    # Kết hợp tất cả kết quả thành một chuỗi
-return "\n".join(result)
+    return "\n".join(result)

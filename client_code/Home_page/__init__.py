@@ -28,17 +28,15 @@ class Home_page(Home_pageTemplate):
     }
 
   def add_btn_click(self, **event_args):
-     # Lấy
-    word = self.input_text.text
+     # Lấy input
+    vocab_input = self.input_text.text
     
     # Gọi hàm server để lấy thông tin
-    result = anvil.server.call('get_word_info', word)
+    result = anvil.server.call('get_word_info', vocab_input)
     
     # Hiển thị kết quả
-    self.output_text.text = result
-    # """This method is called when the button is clicked"""
-    # anvil.server.call('add_vocab',self.new_vocab_data)
-    # alert("Add Successful!!!")
+    self.output_text.content = result
+ 
 
 
     

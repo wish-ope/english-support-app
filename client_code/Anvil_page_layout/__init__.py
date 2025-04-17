@@ -13,26 +13,31 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.init_components(**properties)
     
     self.logout_button.visible = False
-    self.profile_button.visible = False
-    self.notebook_btn.visible = False
+    self.hide_user_bth()
     # Any code you write here will run before the form opens.
 
+  def hide_user_bth(self, **event_args):
+    self.profile_btn.visible = False
+    self.notebook_btn.visible = False
+  def show_user_bth(self, **event_args):
+    self.profile_btn.visible = True
+    self.notebook_btn.visible = True
+
+    
   # function login when click button
   def login_button_click(self, **event_args):
     anvil.users.login_with_form()
     open_form('Home_page')
     self.logout_button.visible = True
     self.login_button.visible = False
-    self.profile_button.visible = True
-    self.notebook_btn.visible = True
+    self.show_user_bth()
     
   #function log out
   def logout_button_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.users.logout()
     # show login btn and hide logout btn
-    self.notebook_btn.visible = False
-    self.profile_btn.visible = False
+    self.hide_user_bth()
     self.login_button.visible = True
     self.logout_button.visible = False 
     self.notebook_btn.visible = True

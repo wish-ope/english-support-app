@@ -12,8 +12,10 @@ nlp = en_core_web_sm.load()
 nlp.add_pipe("spacy_wordnet", after='tagger')
 
 @anvil.server.callable
-def add_vocab(vocab_data):
-  app_tables.vocab.add_row(Vocab=vocab_data["vocab_input"], Means=vocab_data["means_input"])
+def get_word_info(word):
+    if not word or not word.strip():
+        return "Error: Please enter a valid word."
+    
 # doc = nlp("dog")
 # for synset in doc[0]._.wordnet.synsets():
 #     print('Definition: ' + synset.definition())

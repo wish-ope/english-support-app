@@ -31,6 +31,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     """This method is called when the button is clicked"""
     anvil.users.logout()
     # show login btn and hide logout btn
+    
     self.login_button.visible = True
     self.logout_button.visible = False 
     self.notebook_btn.visible = True

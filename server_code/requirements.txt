@@ -1,2 +1,2 @@
-spacy==3.8.4
-spacy-wordnet==0.1.0
+spacy
+spacy-wordnet

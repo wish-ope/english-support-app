@@ -333,5 +333,3 @@ roles:
   name: input-error
 - components: [GridPanel]
   name: border-radius
-- components: [Button]
-  name: hover-button

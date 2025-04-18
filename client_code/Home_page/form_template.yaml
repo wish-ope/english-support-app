@@ -19,8 +19,7 @@ components_by_slot:
       name: input_text
       properties: {auto_expand: true, placeholder: input to search..., text: ''}
       type: TextArea
-    - components: []
-      layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
+    - layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
       name: output_text
       properties: {}
       type: RichText
@@ -34,10 +33,9 @@ components_by_slot:
       name: add_btn
       properties: {role: elevated-button, text: Add Vocab}
       type: Button
-    data_bindings: []
     layout_properties: {full_width_row: false}
     name: grid_panel_1
-    properties: {background: 'theme:Primary Container', border: '', foreground: '', role: null, spacing_above: small, spacing_below: small}
+    properties: {background: 'theme:Primary Container', border: '', foreground: '', role: border-radius, spacing_above: small, spacing_below: small, visible: true}
     type: GridPanel
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

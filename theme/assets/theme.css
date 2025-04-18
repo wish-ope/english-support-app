@@ -1,7 +1,10 @@
 /**
  This CSS implements the Material Design 3 look and feel for Anvil apps.
  **/
-
+/* Border radius for panel */
+.anvil-role-border-radius{
+  border-radius: 10px;
+}
 /* Placeholder css*/
 .placeholder{
   color: rgba(0, 0, 0, 0.2);

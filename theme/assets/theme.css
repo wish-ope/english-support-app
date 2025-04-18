@@ -9,8 +9,7 @@
 }
 /* hover button  */
 .anvil-role-hover-button:hover{
-  font-size: 20px !important;
-  color: white !important;
+  color: red;
 }
 /* Placeholder css*/
 .placeholder{
@@ -546,7 +545,9 @@ color: %color:On Primary Container%;
   box-shadow: none;
   top: 0;
 }
-
+.btn:active{
+  transform: scale(0.95);
+}
 /* Notifications */
 body>div[data-notify="container"] {
   background: linear-gradient(0deg, %color:Primary Overlay 3%, %color:Primary Overlay 3%), %color:Background%;

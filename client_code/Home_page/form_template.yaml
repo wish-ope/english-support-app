@@ -25,10 +25,11 @@ components_by_slot:
       name: output_text
       properties: {}
       type: RichText
-    data_bindings: []
+    data_bindings:
+    - {code: 'self.item['''']', property: border, writeback: false}
     layout_properties: {full_width_row: false}
     name: grid_panel_1
-    properties: {background: 'theme:Primary Container', border: 100px}
+    properties: {background: 'theme:Primary Container', border: 100px, visible: true}
     type: GridPanel
   - event_bindings: {click: add_btn_click}
     layout_properties: {}

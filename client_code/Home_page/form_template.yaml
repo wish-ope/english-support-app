@@ -37,7 +37,18 @@ components_by_slot:
       type: Button
     layout_properties: {full_width_row: false}
     name: grid_panel_1
-    properties: {background: 'theme:Primary Container', border: '', foreground: '', role: border-radius, spacing_above: small, spacing_below: small, visible: true}
+    properties:
+      background: theme:Primary Container
+      border: ''
+      foreground: ''
+      role: [border-radius, box-shadow]
+      spacing_above: small
+      spacing_below: small
+      visible: true
     type: GridPanel
+  - layout_properties: {}
+    name: spacer_2
+    properties: {height: 33.39996337890625}
+    type: Spacer
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

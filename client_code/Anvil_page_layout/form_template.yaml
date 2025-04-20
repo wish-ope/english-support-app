@@ -3,11 +3,12 @@ components:
   - event_bindings: {click: logout_button_click}
     layout_properties: {}
     name: logout_button
-    properties: {role: elevated-button, text: Logout}
+    properties: {icon: 'fa:sign-out', icon_align: right, role: elevated-button, text: Logout}
     type: Button
   - event_bindings: {click: login_button_click}
+    layout_properties: {}
     name: login_button
-    properties: {role: outlined-button, text: Login Account}
+    properties: {icon: 'fa:sign-in', role: outlined-button, text: Login Account}
     type: Button
   layout_properties: {slot: nav-right}
   name: navbar_links

@@ -333,3 +333,5 @@ roles:
   name: input-error
 - components: [GridPanel]
   name: border-radius
+- components: [GridPanel]
+  name: box-shadow

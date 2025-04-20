@@ -190,6 +190,7 @@ color: %color:On Primary Container%;
   top: %anvil-banner-height%;
   right: 0;
   left: 0;
+  box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.3);
 /*   flex: 0 0;
   flex-basis: auto;
   flex-basis: content; */
@@ -528,6 +529,8 @@ color: %color:On Primary Container%;
   line-height: 32px;
   border: 0;
   color: %color:On Surface%;
+
+
 }
 
 .modal-body {

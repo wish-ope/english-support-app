@@ -42,12 +42,16 @@ class Home_page(Home_pageTemplate):
     """This method is called when the button is clicked"""
     # Lấy input
     vocab_input = self.input_text.text
-    
+    if not vocab_input:
+      alert("Error: Please enter a valid word.")    
     # Gọi hàm server để lấy thông tin
-    result = anvil.server.call('get_word_info', vocab_input)
+    else:
+      result = anvil.server.call('get_word_info', vocab_input)
     
     # Hiển thị kết quả
-    self.output_text.content = result
+
+      self.output_text.content = result
+
  
 
 

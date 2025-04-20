@@ -20,9 +20,8 @@ except:
 
 @anvil.server.callable
 def get_word_info(vocab_input):
-    if not vocab_input or not vocab_input.strip():
-        return "Error: Please enter a valid word."
-    
+    # if not vocab_input or not vocab_input.strip():
+    #     return "Error: Please enter a valid word."
     doc = nlp(vocab_input.strip())
     result = []
     for synset in doc[0]._.wordnet.synsets():

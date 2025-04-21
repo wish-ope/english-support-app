@@ -1,9 +1,9 @@
 components_by_slot:
   slot_1:
   - components:
-    - layout_properties: {grid_position: 'ALIOJX,HTDEFL'}
+    - layout_properties: {full_width_row: false, grid_position: 'ALIOJX,HTDEFL'}
       name: image_1
-      properties: {border_radius: 50%, height: 149.19998168945312, horizontal_align: center, role: null}
+      properties: {border_radius: 50%, display_mode: shrink_to_fit, height: 96.60000610351562, horizontal_align: center, role: avatar-image, source: '', spacing_above: small, vertical_align: center, visible: true}
       type: Image
     - layout_properties: {grid_position: 'LMEXCO,VIQYOT QIQMIX,YXEJUZ'}
       name: firstN_lb

@@ -3,7 +3,7 @@ components_by_slot:
   - components:
     - layout_properties: {full_width_row: false, grid_position: 'ALIOJX,HTDEFL'}
       name: image_1
-      properties: {border_radius: 50%, display_mode: shrink_to_fit, height: 96.60000610351562, horizontal_align: center, role: avatar-image, source: '', spacing_above: small, vertical_align: center, visible: true}
+      properties: {border_radius: 50%, display_mode: shrink_to_fit, height: '96', horizontal_align: center, role: avatar-image, source: '', spacing_above: small, vertical_align: center, visible: true}
       type: Image
     - layout_properties: {grid_position: 'LMEXCO,VIQYOT QIQMIX,YXEJUZ'}
       name: firstN_lb

@@ -332,4 +332,4 @@ roles:
 - components: [TextBox, TextArea, DatePicker, DropDown]
   name: input-error
 - components: [Image]
-  name: avatar-img
+  name: avatar-image

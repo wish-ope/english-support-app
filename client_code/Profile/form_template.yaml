@@ -3,7 +3,7 @@ components_by_slot:
   - components:
     - layout_properties: {grid_position: 'ALIOJX,HTDEFL'}
       name: image_1
-      properties: {border_radius: 50%, height: 149.19998168945312, horizontal_align: center}
+      properties: {border_radius: 50%, height: 149.19998168945312, horizontal_align: center, role: null}
       type: Image
     - layout_properties: {grid_position: 'LMEXCO,VIQYOT QIQMIX,YXEJUZ'}
       name: firstN_lb

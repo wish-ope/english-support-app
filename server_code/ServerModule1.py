@@ -25,6 +25,8 @@ def get_word_info(vocab_input):
     doc = nlp(vocab_input.strip())
     result = []
     for synset in doc[0]._.wordnet.synsets():
+        # print(dir(synset))
+        result.append(f"POS: {synset.pos()}")
         result.append(f"Definition: {synset.definition()}")
         examples = synset.examples()
         result.append(f"Total Example: {len(examples)}")

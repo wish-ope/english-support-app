@@ -1,29 +1,33 @@
 components_by_slot:
   slot_1:
   - components:
-    - layout_properties: {full_width_row: false, grid_position: 'ALIOJX,HTDEFL'}
+    - layout_properties: {col_xs: 5, row: BLVUWQ, width_xs: 2}
       name: image_1
-      properties: {border_radius: 50%, display_mode: shrink_to_fit, height: '96', horizontal_align: center, role: avatar-image, source: '', spacing_above: small, vertical_align: center, visible: true}
+      properties: {border_radius: 50%, height: 127, role: null}
       type: Image
-    - layout_properties: {grid_position: 'LMEXCO,VIQYOT QIQMIX,YXEJUZ'}
-      name: firstN_lb
-      properties: {align: center, text: 'First Name:'}
+    - layout_properties: {col_xs: 5, row: GJFWRR, width_xs: 2}
+      name: name_label
+      properties: {align: center, text: ''}
       type: Label
-    - layout_properties: {grid_position: 'LMEXCO,VIQYOT HFRTEM,FYTHPK'}
-      name: lastN_lb
-      properties: {align: center, text: 'Last Name:'}
-      type: Label
-    - layout_properties: {grid_position: 'LMEXCO,VGLTDD QOREGM,DZGDAB'}
-      name: label_1
-      properties: {text: ''}
-      type: Label
-    - layout_properties: {grid_position: 'LMEXCO,VGLTDD YHIIXC,UCRWCU'}
+    - layout_properties: {col_xs: 3, row: WFXTKH, width_xs: 1}
       name: label_2
+      properties: {align: center, bold: true, italic: true, text: 'Email:'}
+      type: Label
+    - layout_properties: {col_xs: 4, row: WFXTKH, width_xs: 3}
+      name: email_label
+      properties: {}
+      type: Label
+    - layout_properties: {col_xs: 3, row: OTJJRC, width_xs: 1}
+      name: label_3
+      properties: {align: center, bold: true, italic: true, text: 'Phone:'}
+      type: Label
+    - layout_properties: {col_xs: 4, row: OTJJRC, width_xs: 3}
+      name: phone_label
       properties: {}
       type: Label
     layout_properties: {}
-    name: outlined_card_1
-    properties: {col_widths: '{"VIQYOT":10,"VGLTDD":50}', role: outlined-card}
-    type: ColumnPanel
+    name: grid_panel_1
+    properties: {}
+    type: GridPanel
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

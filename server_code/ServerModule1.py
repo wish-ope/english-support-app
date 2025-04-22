@@ -7,17 +7,21 @@ import spacy
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 import nltk
 
+#https://anvil.works/forum/t/how-do-i-load-a-spacy-model/15279/5
+#https://spacy.io/models/en#en_core_web_sm
+import en_core_web_sm
+nlp = en_core_web_sm.load()
 # Tải WordNet và khởi tạo spaCy
 #https://github.com/argilla-io/spacy-wordnet
-try:
-    nltk.download('wordnet', quiet=True)
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("wordnet", after="tagger")
-except:
-    import os
-    os.system("python -m spacy download en_core_web_sm")
-    nlp = spacy.load("en_core_web_sm")
-    nlp.add_pipe("wordnet", after="tagger")
+# try:
+#     nltk.download('wordnet', quiet=True)
+#     nlp = spacy.load("en_core_web_sm")
+#     nlp.add_pipe("wordnet", after="tagger")
+# except:
+#     import os
+#     os.system("python -m spacy download en_core_web_sm")
+#     nlp = spacy.load("en_core_web_sm")
+#     nlp.add_pipe("wordnet", after="tagger")
 
 @anvil.server.callable
 def get_word_info(vocab_input):

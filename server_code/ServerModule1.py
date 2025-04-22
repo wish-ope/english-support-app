@@ -8,6 +8,7 @@ from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 import nltk
 
 # Tải WordNet và khởi tạo spaCy
+#https://github.com/argilla-io/spacy-wordnet
 try:
     nltk.download('wordnet', quiet=True)
     nlp = spacy.load("en_core_web_sm")

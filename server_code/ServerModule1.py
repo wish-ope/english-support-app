@@ -11,8 +11,8 @@ import nltk
 #https://spacy.io/models/en#en_core_web_sm
 import en_core_web_sm
 nlp = en_core_web_sm.load()
-# Tải WordNet và khởi tạo spaCy
 #https://github.com/argilla-io/spacy-wordnet
+nlp.add_pipe("spacy_wordnet", after='tagger')
 # try:
 #     nltk.download('wordnet', quiet=True)
 #     nlp = spacy.load("en_core_web_sm")
@@ -36,11 +36,17 @@ def get_word_info(vocab_input):
         examples = synset.examples()
         result.append(f"Total Example: {len(examples)}")
         if examples:
-            result.append(f"Example: {examples[0]}")
+            temp = "Examples:\n"
+            for e in examples:
+                temp += f"{e}\n"
+              
+            result.append(temp)
         else:
-            result.append(f"Example: No examples available")
+            result.append(f"No examples available")
+        temp = "Synonyms: "
         for lemma in synset.lemma_names():
-            result.append(f"Synonym: {lemma}")
+            temp += f"{lemma}, "
+        result.append(temp)
         result.append("")
     
     if not result:

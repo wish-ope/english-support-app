@@ -13,16 +13,24 @@ components:
     properties: {align: right, bold: true, italic: true, text: 'First Name: '}
     type: Label
   - layout_properties: {col_xs: 4, row: WFXTKH, width_xs: 3}
-    name: text_box_1
-    properties: {role: outlined}
+    name: firstName_input
+    properties: {placeholder: Enter your first name..., role: outlined}
     type: TextBox
   - layout_properties: {col_xs: 2, row: OTJJRC, width_xs: 2}
     name: label_3
     properties: {align: right, bold: true, italic: true, text: 'Last Name: '}
     type: Label
   - layout_properties: {col_xs: 4, row: OTJJRC, width_xs: 3}
-    name: text_box_2
-    properties: {role: outlined}
+    name: lastName_input
+    properties: {placeholder: Enter your last name..., role: outlined}
+    type: TextBox
+  - layout_properties: {col_xs: 2, row: ENNSEB, width_xs: 2}
+    name: label_1
+    properties: {align: right, bold: true, italic: true, text: 'Phone:'}
+    type: Label
+  - layout_properties: {col_xs: 4, row: ENNSEB, width_xs: 3}
+    name: phone_input
+    properties: {placeholder: Enter your phone, role: outlined}
     type: TextBox
   - layout_properties: {col_xs: 5, row: PFRRAT, width_xs: 2}
     name: button_2

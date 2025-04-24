@@ -10,7 +10,7 @@ import anvil.users
 class Anvil_page_layout(Anvil_page_layoutTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
-    print(f"This user has logged in: {anvil.users.get_user()['email']}")
+
     self.init_components(**properties)
     
     self.logout_button.visible = False

@@ -30,26 +30,26 @@ def get_word_info(vocab_input):
     doc = nlp(vocab_input.strip())
     result = []
     for synset in doc[0]._.wordnet.synsets():
-        # print(dir(synset))
-        result.append(f"POS: {synset.pos()}")
-        result.append(f"Definition: {synset.definition()}")
-        examples = synset.examples()
-        result.append(f"Total Example: {len(examples)}")
-        if examples:
-            temp = "Examples:\n"
-            for e in examples:
-                temp += f"{e}\n"
-              
-            result.append(temp)
-        else:
-            result.append(f"No examples available")
-        temp = "Synonyms: "
-        for lemma in synset.lemma_names():
-            temp += f"{lemma}, "
+      # print(dir(synset))
+      result.append(f"POS: {synset.pos()}")
+      result.append(f"Definition: {synset.definition()}")
+      examples = synset.examples()
+      result.append(f"Total Example: {len(examples)}")
+      if examples:
+        temp = "Examples:\n"
+        for e in examples:
+          temp += f"{e}\n"
+          
         result.append(temp)
-        result.append("")
+      else:
+        result.append(f"No examples available")
+      temp = "Synonyms: "
+      for lemma in synset.lemma_names():
+        temp += f"{lemma}, "
+      result.append(temp)
+      result.append("")
     
     if not result:
-        return f"No synsets found for the word '{vocab_input}'."
+      return f"No synsets found for the word '{vocab_input}'."
     
     return "\n".join(result)

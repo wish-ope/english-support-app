@@ -27,6 +27,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     
   # function login when click button
   def login_button_click(self, **event_args):
+
     anvil.users.login_with_form()
     open_form('Home_page')
     self.logout_button.visible = True

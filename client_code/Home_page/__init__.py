@@ -48,6 +48,8 @@ class Home_page(Home_pageTemplate):
     
     # Hiển thị kết quả
     self.output_text.content = result
+
+
  
 
 

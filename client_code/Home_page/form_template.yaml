@@ -19,10 +19,16 @@ components_by_slot:
       name: input_text
       properties: {auto_expand: true, placeholder: input to search..., text: ''}
       type: TextArea
-    - layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
-      name: output_text
-      properties: {}
-      type: RichText
+    - components:
+      - layout_properties: {grid_position: 'DSNUTL,YRVHVY'}
+        name: output_text
+        properties: {format: markdown}
+        type: RichText
+      data_bindings: []
+      layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
+      name: column_panel_1
+      properties: {role: elevated-card, wrap_on: never}
+      type: ColumnPanel
     - event_bindings: {click: search_btn_click}
       layout_properties: {col_xs: 4, row: XFWFKF, width_xs: 2}
       name: search_btn

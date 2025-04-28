@@ -10,6 +10,7 @@ import nltk
 #https://anvil.works/forum/t/how-do-i-load-a-spacy-model/15279/5
 #https://spacy.io/models/en#en_core_web_sm
 import en_core_web_sm
+nltk.download('wordnet', quiet=True)
 nlp = en_core_web_sm.load()
 #https://github.com/argilla-io/spacy-wordnet
 nlp.add_pipe("spacy_wordnet", after='tagger')

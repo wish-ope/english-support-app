@@ -5,7 +5,11 @@
 .anvil-role-avatar-image{
   width: 100px;
 }
-
+.anvil-role-scrollable-panel{
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
 /* Border radius for panel */
 .anvil-role-border-radius{

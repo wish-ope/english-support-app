@@ -48,7 +48,7 @@ class Home_page(Home_pageTemplate):
     else:
       result = anvil.server.call('get_word_info', vocab_input)
       # Hiển thị kết quả
-      self.output_text.content = result
+      self.output_text.text = result
 
 
  

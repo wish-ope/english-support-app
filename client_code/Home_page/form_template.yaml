@@ -20,10 +20,10 @@ components_by_slot:
       properties: {auto_expand: true, placeholder: input to search..., text: ''}
       type: TextArea
     - components:
-      - layout_properties: {grid_position: 'DSNUTL,YRVHVY'}
+      - layout_properties: {grid_position: 'YBXDHV,RZVMZP'}
         name: output_text
-        properties: {format: markdown}
-        type: RichText
+        properties: {role: scrollable-panel}
+        type: Label
       data_bindings: []
       layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
       name: column_panel_1

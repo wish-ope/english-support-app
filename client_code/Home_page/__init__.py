@@ -21,7 +21,7 @@ class Home_page(Home_pageTemplate):
   def input_text_change(self, **event_args):
     """This method is called when the text in this text area is edited"""
     vocab_input = self.input_text.text
-    means_input = self.output_text.content
+    means_input = self.output_text.text
     self.new_vocab_data = {
       "vocab_input": vocab_input,
       "means_input": means_input

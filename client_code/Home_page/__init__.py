@@ -44,12 +44,14 @@ class Home_page(Home_pageTemplate):
 
   def add_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
+    
     vocab_input = self.input_text.text
     means_output = self.output_text.text
     self.new_vocab_data = {
       "vocab_input":vocab_input,
       "means_output":means_output
     }
+    #Kiểm tra nếu dùng chưa tìm kiếm thì không add được từ 
     if not self.output_text.text:
       alert("Input not valid!")
     else:

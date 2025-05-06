@@ -14,6 +14,7 @@ class NoteBook(NoteBookTemplate):
     #Displaying vocab data in grid table
     current_user = anvil.users.get_user()
     if current_user is not None:
+      #Hiển thị từ vựng theo dữ liệu người dùng
       self.data_table.items = app_tables.vocab.search(
         User=current_user
       )

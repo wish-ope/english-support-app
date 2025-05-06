@@ -54,3 +54,13 @@ def get_word_info(vocab_input):
       return f"No synsets found for the word '{vocab_input}'."
     
     return "\n".join(result)
+
+@anvil.server.callable
+def add_vocab(new_vocab_data):
+  current_user = anvil.users.get_user()
+  if current_user is not None:
+    app_tables.vocab.add_row(
+      Vocab=new_vocab_data["vocab_input"],
+      Means=new_vocab_data["means_output"],
+      User=current_user
+    )

@@ -33,6 +33,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.login_button.visible = False
     self.show_user_bth()
     
+    
   #function log out
   def logout_button_click(self, **event_args):
     """This method is called when the button is clicked"""

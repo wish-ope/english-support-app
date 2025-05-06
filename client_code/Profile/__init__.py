@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ..User_form import User_form
 
 
 class Profile(ProfileTemplate):
@@ -13,3 +14,15 @@ class Profile(ProfileTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run before the form opens.
+
+  def button_1_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    new_vocab = {}
+    save_clicked = alert(
+      content=User_form(item = new_vocab),
+      title="Edit Profile",
+      large=True,
+      buttons=[("Save", True), ("Cancel", False)]
+    )
+    if save_clicked:
+      print(new_vocab)

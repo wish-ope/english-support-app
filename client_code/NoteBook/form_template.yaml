@@ -1,7 +1,8 @@
 components_by_slot:
   slot_1:
   - components:
-    - name: repeating_panel_1
+    - layout_properties: {pinned: false}
+      name: data_table
       properties: {item_template: NoteBook.RowTemplate1}
       type: RepeatingPanel
     layout_properties: {}

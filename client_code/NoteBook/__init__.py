@@ -12,5 +12,9 @@ class NoteBook(NoteBookTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
     #Displaying vocab data in grid table
-    self.repeating_panel_1.items = app_tables.vocab.search()
+    current_user = anvil.users.get_user()
+    if current_user is not None:
+      self.data_table.items = app_tables.vocab.search(
+        User=current_user
+      )
 

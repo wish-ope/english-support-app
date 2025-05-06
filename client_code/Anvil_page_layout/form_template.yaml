@@ -8,11 +8,12 @@ components:
   - event_bindings: {click: login_button_click}
     layout_properties: {}
     name: login_button
-    properties: {icon: 'fa:sign-in', role: outlined-button, text: Login}
+    properties: {align: full, icon: 'fa:sign-in', role: elevated-button, text: Login}
     type: Button
-  - layout_properties: {}
+  - event_bindings: {click: button_1_click}
+    layout_properties: {}
     name: button_1
-    properties: {role: outlined-button, text: Sign up}
+    properties: {align: center, icon: 'fa:plus', icon_align: right, role: outlined-button, text: Sign up}
     type: Button
   layout_properties: {slot: nav-right}
   name: navbar_links

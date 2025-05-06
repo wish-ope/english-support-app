@@ -41,6 +41,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
       open_form('Home_page')
     
     
+    
   #function log out
   def logout_button_click(self, **event_args):
     """This method is called when the button is clicked"""

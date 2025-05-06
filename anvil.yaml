@@ -27,6 +27,15 @@ db_schema:
     - admin_ui: {order: 7, width: 200}
       name: remembered_logins
       type: simpleObject
+    - admin_ui: {width: 200}
+      name: first_name
+      type: string
+    - admin_ui: {width: 200}
+      name: last_name
+      type: string
+    - admin_ui: {width: 200}
+      name: user_avatar
+      type: media
     server: full
     title: Users
   vocab:

@@ -27,15 +27,7 @@ class Home_page(Home_pageTemplate):
       "means_input": means_input
     }
 
-  # def add_btn_click(self, **event_args):
-  #    # Lấy input
-  #   # vocab_input = self.input_text.text
-    
-  #   # # Gọi hàm server để lấy thông tin
-  #   # result = anvil.server.call('get_word_info', vocab_input)
-    
-  #   # # Hiển thị kết quả
-  #   # self.output_text.content = result
+
 
 
   def search_btn_click(self, **event_args):

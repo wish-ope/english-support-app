@@ -10,11 +10,6 @@ components:
     name: login_button
     properties: {align: full, icon: 'fa:sign-in', role: elevated-button, text: Login}
     type: Button
-  - event_bindings: {click: button_1_click}
-    layout_properties: {}
-    name: button_1
-    properties: {align: center, icon: 'fa:plus', icon_align: right, role: outlined-button, text: Sign up}
-    type: Button
   layout_properties: {slot: nav-right}
   name: navbar_links
   properties: {}

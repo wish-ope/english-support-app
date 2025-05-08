@@ -21,7 +21,6 @@ class Profile(ProfileTemplate):
     save_clicked = alert(
       content=User_form(item = self.new_user),
       title="Edit Profile",
-      large=True,
+      large = True
     )
-    if save_clicked:
-      print(new_vocab)
+

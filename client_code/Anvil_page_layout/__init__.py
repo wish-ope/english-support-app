@@ -39,6 +39,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     if self.curr_user is not None:
       self.show_user_bth()
       open_form('Home_page')
+      
     
     
     

@@ -17,12 +17,11 @@ class Profile(ProfileTemplate):
 
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
-    new_vocab = {}
+    self.new_user = {}
     save_clicked = alert(
-      content=User_form(item = new_vocab),
+      content=User_form(item = self.new_user),
       title="Edit Profile",
       large=True,
-      buttons=[("Save", True), ("Cancel", False)]
     )
     if save_clicked:
       print(new_vocab)

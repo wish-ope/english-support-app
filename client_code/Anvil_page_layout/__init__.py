@@ -5,6 +5,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.users
+from ..User_form import User_form
 
 
 class Anvil_page_layout(Anvil_page_layoutTemplate):
@@ -14,7 +15,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     
     self.logout_button.visible = False
     self.hide_user_bth()
-    # Any code you write here will run before the form opens.
+
 
   def hide_user_bth(self, **event_args):
     self.profile_btn.visible = False
@@ -32,6 +33,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.logout_button.visible = True
     self.login_button.visible = False
     self.show_user_bth()
+    curr_use
     
     
   #function log out

@@ -20,13 +20,17 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.curr_user = anvil.users.get_user()
     if self.curr_user:
       if not self.curr_user['first_name'] or not self.curr_user['last_name']:
+        self.
         self.new_user = {}
         self.save_clicked = alert(
           content = User_form(item = self.new_user),
           title = "Edit Profile",
-          size = "medium",
-          buttons = []
+          large = True,
+          buttons = [],
+          dismissible = False
         )
+  
+          
           
   def hide_user_bth(self, **event_args):
     self.profile_btn.visible = False

@@ -14,6 +14,7 @@ class Home_page(Home_pageTemplate):
     self.init_components(**properties)
     # If user is logged in, display the add button
     current_user = anvil.users.get_user()
+    self.check_user_info()
     if current_user == None:
       self.add_btn.visible = False
     else:
@@ -37,15 +38,18 @@ class Home_page(Home_pageTemplate):
   def check_user_info(self):
     curr_user = anvil.users.get_user()
     if curr_user and (not curr_user['first_name'] or not curr_user['last_name']):
-      save_clicked = alert(
-        content = User_form(),
-        title = "Update Information",
+      self.new_user = {}
+      self.save_clicked = alert(
+        content = User_form(item = self.new_user),
+        title = "Edit Profile",
         large = True,
         buttons = [],
         dismissible = False
       )
-      if save_clicked:
-        self.la
+      if self.save_clicked:
+        open_form('Home_page')
+
+
     
 
 

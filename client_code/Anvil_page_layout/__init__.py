@@ -16,18 +16,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.logout_button.visible = False
     self.hide_user_bth()
 
-  def check_user_info(self):
-    self.curr_user = anvil.users.get_user()
-    if self.curr_user:
-      if not self.curr_user['first_name'] or not self.curr_user['last_name']:
-        self.new_user = {}
-        self.save_clicked = alert(
-          content = User_form(item = self.new_user),
-          title = "Edit Profile",
-          large = True,
-          buttons = [],
-          dismissible = False
-        )
+  
   
           
           

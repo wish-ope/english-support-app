@@ -11,10 +11,10 @@ def add_vocab(vocab_data):
 @anvil.server.callable
 def update_user(first_name, last_name, phone):
   curr_user = anvil.users.get_user()
-  if user:
-    user['first_name'] = first_name
-    user['last_name'] = last_name
-    user['phone'] = phone
+  if curr_user:
+    curr_user['first_name'] = first_name
+    curr_user['last_name'] = last_name
+    curr_user['phone'] = phone
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

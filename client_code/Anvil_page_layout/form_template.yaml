@@ -10,10 +10,6 @@ components:
     name: login_button
     properties: {role: outlined-button, text: Login}
     type: Button
-  - layout_properties: {}
-    name: button_1
-    properties: {role: outlined-button, text: Sign up}
-    type: Button
   layout_properties: {slot: nav-right}
   name: navbar_links
   properties: {}

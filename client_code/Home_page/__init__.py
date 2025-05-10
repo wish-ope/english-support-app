@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ..User_form import User_form
 
 
 class Home_page(Home_pageTemplate):
@@ -13,8 +14,9 @@ class Home_page(Home_pageTemplate):
     self.init_components(**properties)
     # If user is logged in, display the add button
     self.curr_user = anvil.users.get_user()
-    if self.curr_user is not None:
-      self.add_btn.visible = True
+    self.check_user_info()
+    if self.curr_user == None:
+      self.add_btn.visible = False
     else:
       self.add_btn.visible = False
       
@@ -62,7 +64,21 @@ class Home_page(Home_pageTemplate):
  
 
 
-    
+  def check_user_info(self):
+    curr_user = anvil.users.get_user()
+    if curr_user and (not curr_user['first_name'] or not curr_user['last_name']):
+      self.new_user = {}
+      self.save_clicked = alert(
+        content = User_form(item = self.new_user),
+        title = "Edit Profile",
+        large = True,
+        buttons = [],
+        dismissible = False
+      )
+      if self.save_clicked:
+        open_form('Home_page')
+
+
     
 
 

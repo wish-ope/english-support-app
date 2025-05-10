@@ -24,7 +24,6 @@ components_by_slot:
         name: output_text
         properties: {role: scrollable-panel}
         type: Label
-      data_bindings: []
       layout_properties: {col_xs: 7, row: TECRSS, width_xs: 4}
       name: column_panel_1
       properties: {role: elevated-card, wrap_on: never}

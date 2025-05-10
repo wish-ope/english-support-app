@@ -32,6 +32,15 @@ components:
     name: phone_input
     properties: {placeholder: Enter your phone, role: outlined}
     type: TextBox
+  - event_bindings: {click: save_btn_click}
+    layout_properties: {col_xs: 8, row: RDUXZX, width_xs: 2}
+    name: save_btn
+    properties: {align: right, bold: true, text: Save}
+    type: Button
+  - layout_properties: {col_xs: 10, row: RDUXZX, width_xs: 2}
+    name: cancel_btn
+    properties: {align: left, bold: true, italic: false, text: Cancel}
+    type: Button
   layout_properties: {grid_position: 'HXMRPD,SPLFKO'}
   name: grid_panel_1
   properties: {}

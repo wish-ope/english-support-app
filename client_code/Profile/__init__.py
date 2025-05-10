@@ -21,6 +21,8 @@ class Profile(ProfileTemplate):
     save_clicked = alert(
       content=User_form(item = self.new_user),
       title="Edit Profile",
-      large = True
+      large = True,
+      buttons = [],
+      dismissible = False
     )
 

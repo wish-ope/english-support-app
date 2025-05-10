@@ -12,7 +12,16 @@ class Profile(ProfileTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-
-    # Any code you write here will run before the form opens.
+    current_user = anvil.users.get_user()
+    anvil.server.call('get_curr_user_data')
+    self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
+    self.email_label.text = current_user['email']
+    self.phone_label.text = current_user['phone']
+    # if current_user is not None:
+    #   #Hiển thị từ vựng theo dữ liệu người dùng
+    #   self.data_table.items = app_tables.users.search(
+    #     User=current_user
+    #   )
+    # # Any code you write here will run before the form opens.
 
 

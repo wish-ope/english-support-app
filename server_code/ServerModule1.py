@@ -64,12 +64,23 @@ def add_vocab(new_vocab_data):
       Means=new_vocab_data["means_output"],
       User=current_user
     )
+
+@anvil.server.callable
 def update_user(first_name, last_name, phone):
   curr_user = anvil.users.get_user()
   if curr_user:
     curr_user['first_name'] = first_name
     curr_user['last_name'] = last_name
     curr_user['phone'] = phone
+
+@anvil.server.callable
+def get_curr_user_data():
+  curr_user = anvil.users.get_user()
+  if curr_user:
+    return{
+      "first_name": curr_user['first_name'],
+      "last_name": curr_user['last_name']
+    }
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

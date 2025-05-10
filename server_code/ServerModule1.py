@@ -8,7 +8,13 @@ import anvil.server
 def add_vocab(vocab_data):
   app_tables.vocab.add_row(Vocab=vocab_data["vocab_input"], Means=vocab_data["means_input"])
 
-  
+@anvil.server.callable
+def update_user(first_name, last_name, phone):
+  curr_user = anvil.users.get_user()
+  if user:
+    user['first_name'] = first_name
+    user['last_name'] = last_name
+    user['phone'] = phone
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

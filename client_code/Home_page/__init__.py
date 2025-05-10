@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ..User_form import User_form
 
 
 class Home_page(Home_pageTemplate):
@@ -33,7 +34,18 @@ class Home_page(Home_pageTemplate):
     alert("Add Successful!!!")
 
 
-    
+  def check_user_info(self):
+    curr_user = anvil.users.get_user()
+    if curr_user and (not curr_user['first_name'] or not curr_user['last_name']):
+      save_clicked = alert(
+        content = User_form(),
+        title = "Update Information",
+        large = True,
+        buttons = [],
+        dismissible = False
+      )
+      if save_clicked:
+        self.la
     
 
 

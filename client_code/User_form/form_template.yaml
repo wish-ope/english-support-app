@@ -32,7 +32,8 @@ components:
     name: phone_input
     properties: {placeholder: Enter your phone, role: outlined}
     type: TextBox
-  - layout_properties: {col_xs: 8, row: RDUXZX, width_xs: 2}
+  - event_bindings: {click: save_btn_click}
+    layout_properties: {col_xs: 8, row: RDUXZX, width_xs: 2}
     name: save_btn
     properties: {align: right, bold: true, text: Save}
     type: Button

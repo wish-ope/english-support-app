@@ -15,14 +15,14 @@ class Profile(ProfileTemplate):
 
     # Any code you write here will run before the form opens.
 
-  def button_1_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    self.new_user = {}
-    save_clicked = alert(
-      content=User_form(item = self.new_user),
-      title="Edit Profile",
-      large = True,
-      buttons = [],
-      dismissible = False
-    )
+  # def button_1_click(self, **event_args):
+  #   """This method is called when the button is clicked"""
+  #   self.new_user = {}
+  #   save_clicked = alert(
+  #     content=User_form(item = self.new_user),
+  #     title="Edit Profile",
+  #     large = True,
+  #     buttons = [],
+  #     dismissible = False
+  #   )
 

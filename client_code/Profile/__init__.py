@@ -28,16 +28,16 @@ class Profile(ProfileTemplate):
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.new_user = {}
-    form = User_form(item = self.new_user)
-    form.show_btn = True
     self.save_clicked = alert(
       content = User_form(item = self.new_user),
       title = "Edit Profile",
       large = True,
-      buttons = [],
+      buttons = [("Save", True), ("Cancel", False)],
       dismissible = False
     )
     if self.save_clicked:
+      anvil.server.call('add_user', self.new_user)
+      # anvil.server.call('update_user', self.new_user)
       open_form('Profile')
   
 

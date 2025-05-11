@@ -55,6 +55,48 @@ def get_word_relations(vocab_input):
     raise Exception(f"Lỗi khi lấy đồng nghĩa và trái nghĩa: {str(e)}")
 
 @anvil.server.callable
+def get_hyponyms(vocab_input):
+  """Hàm lấy danh sách các từ nghĩa hẹp (hyponyms) của từ"""
+  if not vocab_input or not vocab_input.strip():
+    raise ValueError("Từ nhập vào không hợp lệ")
+
+  try:
+    hyponyms = set()
+    synsets = wn.synsets(vocab_input.strip())
+    for synset in synsets:
+      for hyponym in synset.hyponyms():
+        hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
+
+    print(f"Danh sách hyponyms: {list(hyponyms)}")
+    return list(hyponyms)
+  except Exception as e:
+    print(f"Lỗi trong get_hyponyms: {str(e)}")
+    raise Exception(f"Lỗi khi lấy hyponyms: {str(e)}")
+
+@anvil.server.callable
+def get_meronyms(vocab_input):
+  """Hàm lấy danh sách các từ biểu thị quan hệ bộ phận-toàn phần (meronyms)"""
+  if not vocab_input or not vocab_input.strip():
+    raise ValueError("Từ nhập vào không hợp lệ")
+
+  try:
+    meronyms = set()
+    synsets = wn.synsets(vocab_input.strip())
+    for synset in synsets:
+      # Lấy meronyms (bộ phận của toàn phần)
+      for meronym in synset.part_meronyms():
+        meronyms.update(lemma.name() for lemma in meronym.lemmas())
+      for meronym in synset.substance_meronyms():
+        meronyms.update(lemma.name() for lemma in meronym.lemmas())
+
+    print(f"Danh sách meronyms: {list(meronyms)}")
+    return list(meronyms)
+  except Exception as e:
+    print(f"Lỗi trong get_meronyms: {str(e)}")
+    raise Exception(f"Lỗi khi lấy meronyms: {str(e)}")
+
+
+@anvil.server.callable
 def get_word_info(vocab_input):
   """Hàm lấy thông tin chi tiết của từ"""
   if not vocab_input or not vocab_input.strip():

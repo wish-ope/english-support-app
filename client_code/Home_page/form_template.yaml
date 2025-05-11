@@ -58,7 +58,15 @@ components_by_slot:
         properties: {text: Hyponyms}
         type: Label
       - layout_properties: {grid_position: 'SXNJSO,ADMQAX'}
-        name: column_panel_5
+        name: hyponym_panel
+        properties: {}
+        type: ColumnPanel
+      - layout_properties: {grid_position: 'EZXRSU,DUITGH'}
+        name: label_4
+        properties: {text: Meronyms}
+        type: Label
+      - layout_properties: {grid_position: 'CPCRUS,WQYIQD'}
+        name: meronym_panel
         properties: {}
         type: ColumnPanel
       - layout_properties: {grid_position: 'RVVJKU,HIHDNN'}

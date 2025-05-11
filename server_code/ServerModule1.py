@@ -6,15 +6,23 @@ import anvil.server
 import spacy
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 import nltk
+from nltk.corpus import wordnet as wn
 
 # Tải mô hình ngôn ngữ và WordNet
 try:
   import en_core_web_sm
+  # Đảm bảo tải wordnet và omw-1.4
   nltk.download('wordnet', quiet=True)
+  nltk.download('omw-1.4', quiet=True)  # Tải Open Multilingual WordNet
+  nltk.download('punkt', quiet=True)  # Tải tokenizer
+  nltk.download('averaged_perceptron_tagger', quiet=True)  # Tải POS tagger
   nlp = en_core_web_sm.load()
   nlp.add_pipe("spacy_wordnet", after='tagger')
+  # Kiểm tra xem wordnet đã tải thành công
+  if not wn.synsets('dog'):  # Kiểm tra với một từ phổ biến
+    raise Exception("Không thể tải WordNet từ NLTK. Vui lòng kiểm tra kết nối hoặc cài đặt lại.")
 except Exception as e:
-  raise Exception(f"Không thể tải mô hình ngôn ngữ: {str(e)}")
+  raise Exception(f"Không thể tải mô hình ngôn ngữ hoặc WordNet: {str(e)}")
 
 @anvil.server.callable
 def get_word_relations(vocab_input):
@@ -63,6 +71,10 @@ def get_hyponyms(vocab_input):
   try:
     hyponyms = set()
     synsets = wn.synsets(vocab_input.strip())
+    if not synsets:
+      print(f"Không tìm thấy synsets cho từ '{vocab_input}'")
+      return []
+
     for synset in synsets:
       for hyponym in synset.hyponyms():
         hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
@@ -82,6 +94,10 @@ def get_meronyms(vocab_input):
   try:
     meronyms = set()
     synsets = wn.synsets(vocab_input.strip())
+    if not synsets:
+      print(f"Không tìm thấy synsets cho từ '{vocab_input}'")
+      return []
+
     for synset in synsets:
       # Lấy meronyms (bộ phận của toàn phần)
       for meronym in synset.part_meronyms():
@@ -95,6 +111,62 @@ def get_meronyms(vocab_input):
     print(f"Lỗi trong get_meronyms: {str(e)}")
     raise Exception(f"Lỗi khi lấy meronyms: {str(e)}")
 
+@anvil.server.callable
+def analyze_sentence(sentence_input):
+  """Hàm phân tích câu: token hóa, POS tagging và xác định vai trò từ"""
+  if not sentence_input or not sentence_input.strip():
+    raise ValueError("Câu nhập vào không hợp lệ")
+
+  try:
+    # Token hóa câu
+    tokens = nltk.word_tokenize(sentence_input.strip())
+    # POS tagging
+    pos_tags = nltk.pos_tag(tokens)
+
+    # Chuẩn bị kết quả
+    result = []
+    for word, pos in pos_tags:
+      word_info = {
+        "word": word,
+        "pos": pos,
+        "role": get_word_role(pos)
+      }
+      result.append(word_info)
+
+    print(f"Kết quả phân tích câu: {result}")
+    return result
+  except Exception as e:
+    print(f"Lỗi trong analyze_sentence: {str(e)}")
+    raise Exception(f"Lỗi khi phân tích câu: {str(e)}")
+
+def get_word_role(pos):
+  """Hàm ánh xạ POS tag thành vai trò ngữ pháp dễ hiểu"""
+  pos_roles = {
+    'NN': 'Danh từ (Noun)',
+    'NNS': 'Danh từ số nhiều (Plural Noun)',
+    'NNP': 'Danh từ riêng (Proper Noun)',
+    'NNPS': 'Danh từ riêng số nhiều (Plural Proper Noun)',
+    'VB': 'Động từ (Verb)',
+    'VBD': 'Động từ quá khứ (Past Verb)',
+    'VBG': 'Động từ dạng V-ing (Gerund/Present Participle)',
+    'VBN': 'Động từ phân từ quá khứ (Past Participle)',
+    'VBP': 'Động từ hiện tại không ngôi thứ 3 (Present Verb, non-3rd person)',
+    'VBZ': 'Động từ hiện tại ngôi thứ 3 (Present Verb, 3rd person)',
+    'JJ': 'Tính từ (Adjective)',
+    'JJR': 'Tính từ so sánh (Comparative Adjective)',
+    'JJS': 'Tính từ cao nhất (Superlative Adjective)',
+    'RB': 'Trạng từ (Adverb)',
+    'RBR': 'Trạng từ so sánh (Comparative Adverb)',
+    'RBS': 'Trạng từ cao nhất (Superlative Adverb)',
+    'IN': 'Giới từ (Preposition)',
+    'DT': 'Mạo từ (Determiner)',
+    'PRP': 'Đại từ (Pronoun)',
+    'PRP$': 'Đại từ sở hữu (Possessive Pronoun)',
+    'CC': 'Liên từ (Conjunction)',
+    'TO': 'Giới từ "to" hoặc dạng "to" của động từ',
+    '.': 'Dấu câu (Punctuation)'
+  }
+  return pos_roles.get(pos, 'Không xác định')
 
 @anvil.server.callable
 def get_word_info(vocab_input):

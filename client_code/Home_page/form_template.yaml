@@ -53,23 +53,7 @@ components_by_slot:
         name: outlined_card_1
         properties: {role: outlined-card}
         type: ColumnPanel
-      - layout_properties: {grid_position: 'AGOBBY,BDEYON'}
-        name: label_3
-        properties: {text: Hyponyms}
-        type: Label
-      - layout_properties: {grid_position: 'SXNJSO,ADMQAX'}
-        name: hyponym_panel
-        properties: {}
-        type: ColumnPanel
-      - layout_properties: {grid_position: 'EZXRSU,DUITGH'}
-        name: label_4
-        properties: {text: Meronyms}
-        type: Label
-      - layout_properties: {grid_position: 'CPCRUS,WQYIQD'}
-        name: meronym_panel
-        properties: {}
-        type: ColumnPanel
-      - layout_properties: {grid_position: 'RVVJKU,HIHDNN'}
+      - layout_properties: {grid_position: 'MOYLDN,GTYQBI'}
         name: label_2
         properties: {font_size: 32, role: display, text: Trái nghĩa}
         type: Label
@@ -86,6 +70,14 @@ components_by_slot:
       name: column_panel_4
       properties: {}
       type: ColumnPanel
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA CPZUTM,UXWAMQ'}
+      name: label_5
+      properties: {font_size: 22, text: Phân tích câu}
+      type: Label
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA KQXPRZ,YNVJUE'}
+      name: sentence_analysis_panel
+      properties: {role: outlined-card}
+      type: ColumnPanel
     - components:
       - components:
         - layout_properties: {grid_position: 'BQLRTC,NXLLLL'}
@@ -99,11 +91,27 @@ components_by_slot:
           spacing:
             padding: [114, null, 105, null]
         type: ColumnPanel
-      layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
+      layout_properties: {grid_position: 'YMLHNL,ZPRBDA DAGHWO,XYHYQU'}
       name: column_panel_3
       properties:
         spacing:
           margin: [44, null, null, null]
+      type: ColumnPanel
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA ZKPLHR,IZHTDC'}
+      name: label_3
+      properties: {font_size: 20, role: headline, text: Hyponyms}
+      type: Label
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA JQHXUQ,AEZZGD'}
+      name: hyponym_panel
+      properties: {role: outlined-card}
+      type: ColumnPanel
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
+      name: label_4
+      properties: {font_size: 20, role: headline, text: Meronyms}
+      type: Label
+    - layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
+      name: meronym_panel
+      properties: {role: outlined-card}
       type: ColumnPanel
     layout_properties: {}
     name: column_panel_2

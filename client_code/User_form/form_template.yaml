@@ -38,7 +38,8 @@ components:
     name: save_btn
     properties: {align: right, bold: true, text: Save}
     type: Button
-  - layout_properties: {col_xs: 10, row: RDUXZX, width_xs: 2}
+  - event_bindings: {click: cancel_btn_click}
+    layout_properties: {col_xs: 10, row: RDUXZX, width_xs: 2}
     name: cancel_btn
     properties: {align: left, bold: true, italic: false, text: Cancel}
     type: Button

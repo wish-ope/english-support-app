@@ -12,8 +12,9 @@ class Profile(ProfileTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
+    # anvil.server.call('get_curr_user_data')
     current_user = anvil.users.get_user()
-    anvil.server.call('get_curr_user_data')
+    
     self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
     self.email_label.text = current_user['email']
     self.phone_label.text = current_user['phone']
@@ -24,4 +25,19 @@ class Profile(ProfileTemplate):
     #   )
     # # Any code you write here will run before the form opens.
 
+  def button_1_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.new_user = {}
+    form = User_form(item = self.new_user)
+    form.show_btn = True
+    self.save_clicked = alert(
+      content = User_form(item = self.new_user),
+      title = "Edit Profile",
+      large = True,
+      buttons = [],
+      dismissible = False
+    )
+    if self.save_clicked:
+      open_form('Profile')
+  
 

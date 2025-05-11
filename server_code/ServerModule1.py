@@ -81,6 +81,7 @@ def get_curr_user_data():
       "first_name": curr_user['first_name'],
       "last_name": curr_user['last_name']
     }
+  return None
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #

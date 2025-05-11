@@ -11,7 +11,7 @@ class User_form(User_formTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
-    self.cancel_btn.visible = False
+    self.cancel_btn.visible = False 
     
     # Any code you write here will run before the form opens.
 

@@ -335,5 +335,5 @@ roles:
   name: border-radius
 - components: [GridPanel]
   name: box-shadow
-- components: [Label]
+- components: [Label, ColumnPanel]
   name: scrollable-panel

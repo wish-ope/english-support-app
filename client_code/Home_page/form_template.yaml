@@ -47,7 +47,8 @@ components_by_slot:
         - components: []
           layout_properties: {grid_position: 'RHURHP,UPGUSR'}
           name: synonym_panel
-          properties: {role: elevated-card}
+          properties:
+            role: [scrollable-panel, outlined-card]
           type: ColumnPanel
         layout_properties: {grid_position: 'JIUBFY,QEFVTV'}
         name: outlined_card_1
@@ -60,7 +61,8 @@ components_by_slot:
       - components:
         - layout_properties: {grid_position: 'RPGIES,TJIHWK'}
           name: antonym_panel
-          properties: {role: elevated-card}
+          properties:
+            role: [elevated-card, scrollable-panel]
           type: ColumnPanel
         layout_properties: {grid_position: 'XYUWUB,QDHMLZ'}
         name: outlined_card_2
@@ -76,7 +78,8 @@ components_by_slot:
       type: Label
     - layout_properties: {grid_position: 'YMLHNL,ZPRBDA KQXPRZ,YNVJUE'}
       name: sentence_analysis_panel
-      properties: {role: outlined-card}
+      properties:
+        role: [outlined-card, scrollable-panel]
       type: ColumnPanel
     - components:
       - components:
@@ -103,7 +106,8 @@ components_by_slot:
       type: Label
     - layout_properties: {grid_position: 'YMLHNL,ZPRBDA JQHXUQ,AEZZGD'}
       name: hyponym_panel
-      properties: {role: outlined-card}
+      properties:
+        role: [outlined-card, scrollable-panel]
       type: ColumnPanel
     - layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
       name: label_4
@@ -111,7 +115,8 @@ components_by_slot:
       type: Label
     - layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
       name: meronym_panel
-      properties: {role: outlined-card}
+      properties:
+        role: [outlined-card, scrollable-panel]
       type: ColumnPanel
     layout_properties: {}
     name: column_panel_2

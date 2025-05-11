@@ -240,3 +240,4 @@ def get_curr_user_data():
       }
   except Exception as e:
     raise Exception(f"Lỗi khi lấy thông tin người dùng: {str(e)}")
+

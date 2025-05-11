@@ -87,6 +87,10 @@ components_by_slot:
           name: detail_label
           properties: {role: scrollable-panel, text: Chọn một từ để xem chi tiết.}
           type: Label
+        - layout_properties: {grid_position: 'TMNSIJ,RIMRTL'}
+          name: word_image
+          properties: {}
+          type: Image
         layout_properties: {grid_position: 'TTIKZU,QSITMY'}
         name: outlined_card_3
         properties:

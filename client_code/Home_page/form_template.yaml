@@ -4,7 +4,7 @@ components_by_slot:
     - components:
       - layout_properties: {}
         name: input_text
-        properties: {role: outlined, text: Nhập từ để tìm...}
+        properties: {placeholder: Enter to search..., role: outlined, text: ''}
         type: TextBox
       layout_properties: {grid_position: 'ATCKRX,BFEPRA'}
       name: data_row_panel_1

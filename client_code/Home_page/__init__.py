@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..User_form import User_form
+import math  # Thêm module math để tính toán góc
 
 class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
@@ -29,15 +30,23 @@ class Home_page(Home_pageTemplate):
     self.sentence_analysis_panel.visible = True
     self.word_of_day_content.visible = True
 
-    # Ẩn ảnh ban đầu
+    # Ẩn ảnh và canvas ban đầu
     self.word_image.visible = False
+    self.hyponym_canvas.visible = False
+    self.meronym_canvas.visible = False
 
     # Hiển thị từ của ngày
     try:
       word_of_day = anvil.server.call('get_word_of_the_day')
-      self.word_of_day_content.text = word_of_day
+      if hasattr(self, 'word_of_day_content_label'):
+        self.word_of_day_content_label.text = word_of_day
+      else:
+        self.word_of_day_content.text = word_of_day
     except Exception as e:
-      self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
+      if hasattr(self, 'word_of_day_content_label'):
+        self.word_of_day_content_label.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
+      else:
+        self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
 
   def clear_all_panels(self):
     """Xóa nội dung của tất cả các panel"""
@@ -46,6 +55,8 @@ class Home_page(Home_pageTemplate):
     self.hyponym_panel.clear()
     self.meronym_panel.clear()
     self.sentence_analysis_panel.clear()
+    self.hyponym_canvas.visible = False
+    self.meronym_canvas.visible = False
 
   def search_btn_click(self, **event_args):
     """Xử lý khi nút tìm kiếm được nhấn"""
@@ -92,18 +103,24 @@ class Home_page(Home_pageTemplate):
       self.antonym_panel.add_component(link)
 
     hyponyms = anvil.server.call('get_hyponyms', word)
-    for hyp in hyponyms:
-      link = Link(text=hyp, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = hyp
-      link.add_event_handler('click', self.hyponym_word_click)
-      self.hyponym_panel.add_component(link)
+    if hyponyms:
+      for hyp in hyponyms:
+        link = Link(text=hyp, role="default", spacing_above="small", spacing_below="small")
+        link.tag.word = hyp
+        link.add_event_handler('click', self.hyponym_word_click)
+        self.hyponym_panel.add_component(link)
+    else:
+      self.hyponym_panel.add_component(Label(text="Không có hyponyms"))
 
     meronyms = anvil.server.call('get_meronyms', word)
-    for mer in meronyms:
-      link = Link(text=mer, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = mer
-      link.add_event_handler('click', self.meronym_word_click)
-      self.meronym_panel.add_component(link)
+    if meronyms:
+      for mer in meronyms:
+        link = Link(text=mer, role="default", spacing_above="small", spacing_below="small")
+        link.tag.word = mer
+        link.add_event_handler('click', self.meronym_word_click)
+        self.meronym_panel.add_component(link)
+    else:
+      self.meronym_panel.add_component(Label(text="Không có meronyms"))
 
   def analyze_sentence(self, sentence):
     """Phân tích một câu: token hóa, POS tagging, vai trò ngữ pháp"""
@@ -132,14 +149,16 @@ class Home_page(Home_pageTemplate):
     self.update_word_details(word)
 
   def hyponym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ hyponym"""
+    """Xử lý khi nhấp vào một từ hyponym và vẽ sơ đồ"""
     word = sender.tag.word
     self.update_word_details(word)
+    self.draw_hyponym_diagram(word)
 
   def meronym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ meronym"""
+    """Xử lý khi nhấp vào một từ meronym và vẽ sơ đồ"""
     word = sender.tag.word
     self.update_word_details(word)
+    self.draw_meronym_diagram(word)
 
   def sentence_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ trong phân tích câu"""
@@ -164,6 +183,98 @@ class Home_page(Home_pageTemplate):
           self.word_image.visible = False
     except Exception as e:
       alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+
+  def draw_hyponym_diagram(self, word):
+    """Vẽ sơ đồ cho hyponyms"""
+    self.hyponym_canvas.visible = True
+    self.meronym_canvas.visible = False
+    # Xóa canvas bằng cách vẽ hình chữ nhật nền
+    self.hyponym_canvas.fill_style = "white"
+    self.hyponym_canvas.fill_rect(0, 0, self.hyponym_canvas.get_width(), self.hyponym_canvas.get_height())
+    hyponyms = anvil.server.call('get_hyponyms', word)
+    if not hyponyms:
+      self.hyponym_canvas.add_component(Label(text="Không có hyponyms để vẽ"))
+      return
+
+    # Tọa độ cơ bản
+    canvas_width = self.hyponym_canvas.get_width()
+    canvas_height = self.hyponym_canvas.get_height()
+    center_x = canvas_width / 2
+    center_y = canvas_height / 2
+    radius = 20
+
+    # Vẽ từ chính ở giữa
+    self.hyponym_canvas.fill_style = "blue"
+    self.hyponym_canvas.begin_path()
+    self.hyponym_canvas.arc(center_x, center_y, radius, 0, 2 * math.pi)
+    self.hyponym_canvas.fill()
+    self.hyponym_canvas.fill_style = "white"
+    self.hyponym_canvas.fill_text(word, center_x - radius/2, center_y + 5)
+
+    # Vẽ hyponyms xung quanh
+    angle_step = 2 * math.pi / len(hyponyms) if hyponyms else 0
+    for i, hyp in enumerate(hyponyms):
+      angle = i * angle_step
+      x = center_x + 100 * math.cos(angle)
+      y = center_y + 100 * math.sin(angle)
+      self.hyponym_canvas.fill_style = "green"
+      self.hyponym_canvas.begin_path()
+      self.hyponym_canvas.arc(x, y, radius, 0, 2 * math.pi)
+      self.hyponym_canvas.fill()
+      self.hyponym_canvas.fill_style = "white"
+      self.hyponym_canvas.fill_text(hyp, x - radius/2, y + 5)
+      # Vẽ đường nối
+      self.hyponym_canvas.stroke_style = "black"
+      self.hyponym_canvas.begin_path()
+      self.hyponym_canvas.move_to(center_x, center_y)
+      self.hyponym_canvas.line_to(x, y)
+      self.hyponym_canvas.stroke()
+
+  def draw_meronym_diagram(self, word):
+    """Vẽ sơ đồ cho meronyms"""
+    self.meronym_canvas.visible = True
+    self.hyponym_canvas.visible = False
+    # Xóa canvas bằng cách vẽ hình chữ nhật nền
+    self.meronym_canvas.fill_style = "white"
+    self.meronym_canvas.fill_rect(0, 0, self.meronym_canvas.get_width(), self.meronym_canvas.get_height())
+    meronyms = anvil.server.call('get_meronyms', word)
+    if not meronyms:
+      self.meronym_canvas.add_component(Label(text="Không có meronyms để vẽ"))
+      return
+
+    # Tọa độ cơ bản
+    canvas_width = self.meronym_canvas.get_width()
+    canvas_height = self.meronym_canvas.get_height()
+    center_x = canvas_width / 2
+    center_y = canvas_height / 2
+    radius = 20
+
+    # Vẽ từ chính ở giữa
+    self.meronym_canvas.fill_style = "blue"
+    self.meronym_canvas.begin_path()
+    self.meronym_canvas.arc(center_x, center_y, radius, 0, 2 * math.pi)
+    self.meronym_canvas.fill()
+    self.meronym_canvas.fill_style = "white"
+    self.meronym_canvas.fill_text(word, center_x - radius/2, center_y + 5)
+
+    # Vẽ meronyms xung quanh
+    angle_step = 2 * math.pi / len(meronyms) if meronyms else 0
+    for i, mer in enumerate(meronyms):
+      angle = i * angle_step
+      x = center_x + 100 * math.cos(angle)
+      y = center_y + 100 * math.sin(angle)
+      self.meronym_canvas.fill_style = "green"
+      self.meronym_canvas.begin_path()
+      self.meronym_canvas.arc(x, y, radius, 0, 2 * math.pi)
+      self.meronym_canvas.fill()
+      self.meronym_canvas.fill_style = "white"
+      self.meronym_canvas.fill_text(mer, x - radius/2, y + 5)
+      # Vẽ đường nối
+      self.meronym_canvas.stroke_style = "black"
+      self.meronym_canvas.begin_path()
+      self.meronym_canvas.move_to(center_x, center_y)
+      self.meronym_canvas.line_to(x, y)
+      self.meronym_canvas.stroke()
 
   def add_btn_click(self, **event_args):
     """Xử lý khi nút thêm từ được nhấn"""

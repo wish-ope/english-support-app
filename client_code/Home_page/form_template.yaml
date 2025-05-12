@@ -86,6 +86,10 @@ components_by_slot:
       name: outlined_card_4
       properties: {role: outlined-card}
       type: ColumnPanel
+    - layout_properties: {grid_position: 'YMLHNL,EYMGGX XWMTKL,AEBVVA'}
+      name: hyponym_canvas
+      properties: {height: 100}
+      type: Canvas
     - layout_properties: {grid_position: 'YMLHNL,EYMGGX UPGKSF,ZDNKAA'}
       name: label_4
       properties: {font_size: 20, role: headline, text: Meronyms}
@@ -96,10 +100,14 @@ components_by_slot:
         properties:
           role: [scrollable-panel]
         type: ColumnPanel
-      layout_properties: {grid_position: 'YMLHNL,EYMGGX'}
+      layout_properties: {grid_position: 'YMLHNL,EYMGGX OAHXMD,XIODXN'}
       name: outlined_card_5
       properties: {role: outlined-card}
       type: ColumnPanel
+    - layout_properties: {grid_position: 'YMLHNL,EYMGGX NWHJKO,CGELQP'}
+      name: meronym_canvas
+      properties: {height: 100}
+      type: Canvas
     - components:
       - layout_properties: {grid_position: 'OJMERY,RWRVHH'}
         name: word_of_day_content

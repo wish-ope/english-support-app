@@ -29,7 +29,7 @@ def get_image_url(word):
   try:
     # Unsplash API (cần Access Key, giả lập URL cho ví dụ)
     # Đăng ký tại https://unsplash.com/developers để lấy YOUR_ACCESS_KEY
-    url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=xdz1FY6iYimqqxpSaE1KWgyW5LO6HphF-CHGI0Ty7mk"
+    url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=YOUR_ACCESS_KEY"
     response = anvil.http.request(url, method="GET", json=True)
     if response.get('results'):
       return response['results'][0]['urls']['small']
@@ -215,11 +215,11 @@ def get_word_info(vocab_input):
       pos = synset.pos()
       pos_desc = get_pos_description(pos)
       result.append(f"Loại từ (POS): {pos_desc}")
-      
+
       # Định nghĩa
       definition = synset.definition()
       result.append(f"Định nghĩa: {definition}")
-      
+
       # Ví dụ
       examples = synset.examples()
       result.append(f"Số câu ví dụ: {len(examples)}")
@@ -230,7 +230,7 @@ def get_word_info(vocab_input):
         result.append(temp)
       else:
         result.append("Không có ví dụ")
-      
+
       # Hypernyms (Từ nghĩa rộng)
       hypernyms = set()
       for hypernym in synset.hypernyms():
@@ -241,7 +241,7 @@ def get_word_info(vocab_input):
         result.append(temp)
       else:
         result.append("Không có từ nghĩa rộng")
-      
+
       # Từ liên quan (Related Words)
       related_words = set()
       for lemma in synset.lemmas():
@@ -255,50 +255,67 @@ def get_word_info(vocab_input):
         result.append(temp)
       else:
         result.append("Không có từ liên quan")
-      
+
       result.append("")  # Dòng trống để phân tách các nghĩa
-    
+
     return "\n".join(result)
   except Exception as e:
     raise Exception(f"Lỗi khi lấy thông tin chi tiết: {str(e)}")
 
 @anvil.server.callable
 def get_word_of_the_day():
-  """Hàm lấy từ của ngày"""
+  """Hàm lấy từ của ngày với định nghĩa và ví dụ rõ ràng hơn"""
   try:
     all_synsets = list(wn.all_synsets())
     if not all_synsets:
       raise Exception("Không thể lấy danh sách từ từ WordNet.")
-    
+
     random_synset = random.choice(all_synsets)
-    word = random_synset.lemma_names()[0]
-    
+    word = random_synset.lemma_names()[0].replace('_', ' ')
+
     doc = nlp(word)
     result = []
-    
+
     synsets = doc[0]._.wordnet.synsets()
     if not synsets:
       return f"Không tìm thấy thông tin cho từ '{word}'."
-    
+
     for idx, synset in enumerate(synsets[:1], 1):
       result.append(f"**Từ của ngày: {word}**")
-      
+
       pos = synset.pos()
       pos_desc = get_pos_description(pos)
       result.append(f"Loại từ (POS): {pos_desc}")
-      
+
       definition = synset.definition()
       result.append(f"Định nghĩa: {definition}")
-      
+
+      # Cung cấp giải thích thêm cho định nghĩa
+      if definition == "terminate" and pos == "v":
+        result.append("Giải thích: Nghĩa là 'chấm dứt' hoặc 'kết thúc', thường dùng để chỉ việc dừng lại một hành động hoặc trạng thái, ví dụ: chấm dứt hợp đồng (break a contract).")
+
       examples = synset.examples()
       if examples:
         result.append("Câu ví dụ:")
-        result.append(f"- {examples[0]}")
+        # Lọc ví dụ phù hợp hơn
+        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]  # Loại bỏ ví dụ gây nhầm lẫn
+        if filtered_examples:
+          result.append(f"- {filtered_examples[0]}")
+        else:
+          # Thêm ví dụ tự tạo nếu không có ví dụ phù hợp
+          if definition == "terminate" and pos == "v":
+            result.append("- They decided to break the agreement.")
+          else:
+            result.append(f"- {examples[0]}")
       else:
-        result.append("Không có ví dụ")
-      
+        if definition == "terminate" and pos == "v":
+          result.append("Câu ví dụ:")
+          result.append("- They decided to break the agreement.")
+        else:
+          result.append("Không có ví dụ")
+
       result.append("")
-    
+
     return "\n".join(result)
   except Exception as e:
     raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")

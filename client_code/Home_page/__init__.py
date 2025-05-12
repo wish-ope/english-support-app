@@ -27,6 +27,17 @@ class Home_page(Home_pageTemplate):
     self.hyponym_panel.visible = True
     self.meronym_panel.visible = True
     self.sentence_analysis_panel.visible = True
+    self.word_of_day_content.visible = True
+
+    # Ẩn ảnh ban đầu
+    self.word_image.visible = False
+
+    # Hiển thị từ của ngày
+    try:
+      word_of_day = anvil.server.call('get_word_of_the_day')
+      self.word_of_day_content.text = word_of_day
+    except Exception as e:
+      self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
 
   def clear_all_panels(self):
     """Xóa nội dung của tất cả các panel"""
@@ -44,13 +55,10 @@ class Home_page(Home_pageTemplate):
       return
 
     try:
-      # Kiểm tra xem input là một từ hay một câu (dựa trên số lượng từ)
       tokens = input_text.split()
       if len(tokens) == 1:
-        # Xử lý cho một từ
         self.analyze_single_word(input_text)
       else:
-        # Xử lý cho một câu
         self.analyze_sentence(input_text)
 
       self.detail_label.text = "Chọn một từ để xem chi tiết."
@@ -71,21 +79,18 @@ class Home_page(Home_pageTemplate):
       alert(f"Không tìm thấy đồng nghĩa hoặc trái nghĩa cho từ '{word}'.")
       return
 
-    # Đồng nghĩa
     for syn in result["synonyms"]:
       link = Link(text=syn, role="default", spacing_above="small", spacing_below="small")
       link.tag.word = syn
       link.add_event_handler('click', self.synonym_word_click)
       self.synonym_panel.add_component(link)
 
-    # Trái nghĩa
     for ant in result["antonyms"]:
       link = Link(text=ant, role="default", spacing_above="small", spacing_below="small")
       link.tag.word = ant
       link.add_event_handler('click', self.antonym_word_click)
       self.antonym_panel.add_component(link)
 
-    # Hyponyms
     hyponyms = anvil.server.call('get_hyponyms', word)
     for hyp in hyponyms:
       link = Link(text=hyp, role="default", spacing_above="small", spacing_below="small")
@@ -93,7 +98,6 @@ class Home_page(Home_pageTemplate):
       link.add_event_handler('click', self.hyponym_word_click)
       self.hyponym_panel.add_component(link)
 
-    # Meronyms
     meronyms = anvil.server.call('get_meronyms', word)
     for mer in meronyms:
       link = Link(text=mer, role="default", spacing_above="small", spacing_below="small")
@@ -105,12 +109,10 @@ class Home_page(Home_pageTemplate):
     """Phân tích một câu: token hóa, POS tagging, vai trò ngữ pháp"""
     self.clear_all_panels()
 
-    # Gọi server để phân tích câu
     sentence_analysis = anvil.server.call('analyze_sentence', sentence)
 
     print(f"Kết quả phân tích câu: {sentence_analysis}")
 
-    # Hiển thị kết quả phân tích câu với từ là Link
     for word_info in sentence_analysis:
       word = word_info["word"]
       role = word_info["role"]
@@ -122,45 +124,44 @@ class Home_page(Home_pageTemplate):
   def synonym_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ đồng nghĩa"""
     word = sender.tag.word
-    try:
-      result = anvil.server.call('get_word_info', word)
-      self.detail_label.text = result
-    except Exception as e:
-      alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+    self.update_word_details(word)
 
   def antonym_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ trái nghĩa"""
     word = sender.tag.word
-    try:
-      result = anvil.server.call('get_word_info', word)
-      self.detail_label.text = result
-    except Exception as e:
-      alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+    self.update_word_details(word)
 
   def hyponym_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ hyponym"""
     word = sender.tag.word
-    try:
-      result = anvil.server.call('get_word_info', word)
-      self.detail_label.text = result
-    except Exception as e:
-      alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+    self.update_word_details(word)
 
   def meronym_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ meronym"""
     word = sender.tag.word
-    try:
-      result = anvil.server.call('get_word_info', word)
-      self.detail_label.text = result
-    except Exception as e:
-      alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+    self.update_word_details(word)
 
   def sentence_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ trong phân tích câu"""
     word = sender.tag.word
+    self.update_word_details(word)
+
+  def update_word_details(self, word):
+    """Cập nhật thông tin chi tiết và hiển thị ảnh"""
     try:
       result = anvil.server.call('get_word_info', word)
-      self.detail_label.text = result
+      lines = result.split('\n')
+      self.detail_label.text = "\n".join(line for line in lines if not line.startswith('**Ảnh minh họa:**'))
+
+      # Hiển thị ảnh
+      image_url_line = next((line for line in lines if line.startswith('**Ảnh minh họa:**')), None)
+      if image_url_line:
+        image_url = image_url_line.replace('**Ảnh minh họa:** ', '').strip()
+        if image_url != "Không tìm thấy ảnh" and image_url:
+          self.word_image.source = image_url
+          self.word_image.visible = True
+        else:
+          self.word_image.visible = False
     except Exception as e:
       alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
 

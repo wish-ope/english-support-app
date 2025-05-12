@@ -7,22 +7,36 @@ import spacy
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 import nltk
 from nltk.corpus import wordnet as wn
+import random
+import anvil.http
 
 # Tải mô hình ngôn ngữ và WordNet
 try:
   import en_core_web_sm
-  # Đảm bảo tải wordnet và omw-1.4
   nltk.download('wordnet', quiet=True)
-  nltk.download('omw-1.4', quiet=True)  # Tải Open Multilingual WordNet
-  nltk.download('punkt', quiet=True)  # Tải tokenizer
-  nltk.download('averaged_perceptron_tagger', quiet=True)  # Tải POS tagger
+  nltk.download('omw-1.4', quiet=True)
+  nltk.download('punkt', quiet=True)
+  nltk.download('averaged_perceptron_tagger', quiet=True)
   nlp = en_core_web_sm.load()
   nlp.add_pipe("spacy_wordnet", after='tagger')
-  # Kiểm tra xem wordnet đã tải thành công
-  if not wn.synsets('dog'):  # Kiểm tra với một từ phổ biến
+  if not wn.synsets('dog'):
     raise Exception("Không thể tải WordNet từ NLTK. Vui lòng kiểm tra kết nối hoặc cài đặt lại.")
 except Exception as e:
   raise Exception(f"Không thể tải mô hình ngôn ngữ hoặc WordNet: {str(e)}")
+
+def get_image_url(word):
+  """Hàm lấy URL ảnh minh họa từ Unsplash"""
+  try:
+    # Unsplash API (cần Access Key, giả lập URL cho ví dụ)
+    # Đăng ký tại https://unsplash.com/developers để lấy YOUR_ACCESS_KEY
+    url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=xdz1FY6iYimqqxpSaE1KWgyW5LO6HphF-CHGI0Ty7mk"
+    response = anvil.http.request(url, method="GET", json=True)
+    if response.get('results'):
+      return response['results'][0]['urls']['small']
+    return None
+  except Exception as e:
+    print(f"Lỗi khi lấy ảnh: {str(e)}")
+    return None
 
 @anvil.server.callable
 def get_word_relations(vocab_input):
@@ -42,10 +56,8 @@ def get_word_relations(vocab_input):
       synsets = token._.wordnet.synsets()
       print(f"Synsets cho token '{token.text}': {len(synsets)}")
       for synset in synsets:
-        # Lấy danh sách đồng nghĩa
         for lemma in synset.lemma_names():
           synonyms.add(lemma)
-        # Lấy danh sách trái nghĩa
         for lemma in synset.lemmas():
           antonym_list = lemma.antonyms()
           for antonym in antonym_list:
@@ -99,7 +111,6 @@ def get_meronyms(vocab_input):
       return []
 
     for synset in synsets:
-      # Lấy meronyms (bộ phận của toàn phần)
       for meronym in synset.part_meronyms():
         meronyms.update(lemma.name() for lemma in meronym.lemmas())
       for meronym in synset.substance_meronyms():
@@ -118,12 +129,9 @@ def analyze_sentence(sentence_input):
     raise ValueError("Câu nhập vào không hợp lệ")
 
   try:
-    # Token hóa câu
     tokens = nltk.word_tokenize(sentence_input.strip())
-    # POS tagging
     pos_tags = nltk.pos_tag(tokens)
 
-    # Chuẩn bị kết quả
     result = []
     for word, pos in pos_tags:
       word_info = {
@@ -168,39 +176,132 @@ def get_word_role(pos):
   }
   return pos_roles.get(pos, 'Không xác định')
 
+def get_pos_description(pos_code):
+  """Hàm ánh xạ mã POS của WordNet thành mô tả dễ hiểu"""
+  pos_descriptions = {
+    'n': 'Danh từ (Noun)',
+    'v': 'Động từ (Verb)',
+    'a': 'Tính từ (Adjective)',
+    'r': 'Trạng từ (Adverb)',
+    's': 'Tính từ vệ tinh (Satellite Adjective)'
+  }
+  return pos_descriptions.get(pos_code, 'Không xác định')
+
 @anvil.server.callable
 def get_word_info(vocab_input):
-  """Hàm lấy thông tin chi tiết của từ"""
+  """Hàm lấy thông tin chi tiết của từ với nội dung mở rộng, bao gồm ảnh minh họa"""
   if not vocab_input or not vocab_input.strip():
     raise ValueError("Từ nhập vào không hợp lệ")
 
   try:
     doc = nlp(vocab_input.strip())
     result = []
-    for synset in doc[0]._.wordnet.synsets():
-      result.append(f"POS: {synset.pos()}")
-      result.append(f"Definition: {synset.definition()}")
-      examples = synset.examples()
-      result.append(f"Total Example: {len(examples)}")
-      if examples:
-        temp = "Examples:\n"
-        for e in examples:
-          temp += f"{e}\n"
-        result.append(temp)
-      else:
-        result.append(f"Không có ví dụ")
-      temp = "Synonyms: "
-      for lemma in synset.lemma_names():
-        temp += f"{lemma}, "
-      result.append(temp)
-      result.append("")
 
-    if not result:
+    # Lấy tất cả synsets cho từ
+    synsets = doc[0]._.wordnet.synsets()
+    if not synsets:
       return f"Không tìm thấy thông tin cho từ '{vocab_input}'."
 
+    # Thêm ảnh minh họa (URL)
+    image_url = get_image_url(vocab_input)
+    result.append(f"**Ảnh minh họa:** {image_url if image_url else 'Không tìm thấy ảnh'}")
+    result.append("")
+
+    # Xử lý từng synset
+    for idx, synset in enumerate(synsets, 1):
+      result.append(f"**Nghĩa {idx}:**")
+
+      # POS và mô tả
+      pos = synset.pos()
+      pos_desc = get_pos_description(pos)
+      result.append(f"Loại từ (POS): {pos_desc}")
+      
+      # Định nghĩa
+      definition = synset.definition()
+      result.append(f"Định nghĩa: {definition}")
+      
+      # Ví dụ
+      examples = synset.examples()
+      result.append(f"Số câu ví dụ: {len(examples)}")
+      if examples:
+        temp = "Câu ví dụ:\n"
+        for e in examples[:3]:  # Giới hạn tối đa 3 ví dụ mỗi synset
+          temp += f"- {e}\n"
+        result.append(temp)
+      else:
+        result.append("Không có ví dụ")
+      
+      # Hypernyms (Từ nghĩa rộng)
+      hypernyms = set()
+      for hypernym in synset.hypernyms():
+        hypernyms.update(lemma.name() for lemma in hypernym.lemmas())
+      if hypernyms:
+        temp = "Từ nghĩa rộng (Hypernyms): "
+        temp += ", ".join(list(hypernyms)[:5])  # Giới hạn tối đa 5 từ
+        result.append(temp)
+      else:
+        result.append("Không có từ nghĩa rộng")
+      
+      # Từ liên quan (Related Words)
+      related_words = set()
+      for lemma in synset.lemmas():
+        for similar in lemma.similar_tos():
+          related_words.add(similar.name())
+        for derivation in lemma.derivationally_related_forms():
+          related_words.add(derivation.name())
+      if related_words:
+        temp = "Từ liên quan (Related Words): "
+        temp += ", ".join(list(related_words)[:5])
+        result.append(temp)
+      else:
+        result.append("Không có từ liên quan")
+      
+      result.append("")  # Dòng trống để phân tách các nghĩa
+    
     return "\n".join(result)
   except Exception as e:
     raise Exception(f"Lỗi khi lấy thông tin chi tiết: {str(e)}")
+
+@anvil.server.callable
+def get_word_of_the_day():
+  """Hàm lấy từ của ngày"""
+  try:
+    all_synsets = list(wn.all_synsets())
+    if not all_synsets:
+      raise Exception("Không thể lấy danh sách từ từ WordNet.")
+    
+    random_synset = random.choice(all_synsets)
+    word = random_synset.lemma_names()[0]
+    
+    doc = nlp(word)
+    result = []
+    
+    synsets = doc[0]._.wordnet.synsets()
+    if not synsets:
+      return f"Không tìm thấy thông tin cho từ '{word}'."
+    
+    for idx, synset in enumerate(synsets[:1], 1):
+      result.append(f"**Từ của ngày: {word}**")
+      
+      pos = synset.pos()
+      pos_desc = get_pos_description(pos)
+      result.append(f"Loại từ (POS): {pos_desc}")
+      
+      definition = synset.definition()
+      result.append(f"Định nghĩa: {definition}")
+      
+      examples = synset.examples()
+      if examples:
+        result.append("Câu ví dụ:")
+        result.append(f"- {examples[0]}")
+      else:
+        result.append("Không có ví dụ")
+      
+      result.append("")
+    
+    return "\n".join(result)
+  except Exception as e:
+    raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")
 
 @anvil.server.callable
 def add_vocab(new_vocab_data):
@@ -240,4 +341,3 @@ def get_curr_user_data():
       }
   except Exception as e:
     raise Exception(f"Lỗi khi lấy thông tin người dùng: {str(e)}")
-

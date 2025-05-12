@@ -193,7 +193,9 @@ class Home_page(Home_pageTemplate):
     self.hyponym_canvas.fill_rect(0, 0, self.hyponym_canvas.get_width(), self.hyponym_canvas.get_height())
     hyponyms = anvil.server.call('get_hyponyms', word)
     if not hyponyms:
-      self.hyponym_canvas.add_component(Label(text="Không có hyponyms để vẽ"))
+      self.hyponym_canvas.fill_style = "black"
+      self.hyponym_canvas.font = "16px Arial"
+      self.hyponym_canvas.fill_text("Không có hyponyms để vẽ", 10, 20)
       return
 
     # Tọa độ cơ bản
@@ -209,7 +211,8 @@ class Home_page(Home_pageTemplate):
     self.hyponym_canvas.arc(center_x, center_y, radius, 0, 2 * math.pi)
     self.hyponym_canvas.fill()
     self.hyponym_canvas.fill_style = "white"
-    self.hyponym_canvas.fill_text(word, center_x - radius/2, center_y + 5)
+    self.hyponym_canvas.font = "12px Arial"
+    self.hyponym_canvas.fill_text(word, center_x - (len(word) * 3), center_y + 5)
 
     # Vẽ hyponyms xung quanh
     angle_step = 2 * math.pi / len(hyponyms) if hyponyms else 0
@@ -222,7 +225,7 @@ class Home_page(Home_pageTemplate):
       self.hyponym_canvas.arc(x, y, radius, 0, 2 * math.pi)
       self.hyponym_canvas.fill()
       self.hyponym_canvas.fill_style = "white"
-      self.hyponym_canvas.fill_text(hyp, x - radius/2, y + 5)
+      self.hyponym_canvas.fill_text(hyp, x - (len(hyp) * 3), y + 5)
       # Vẽ đường nối
       self.hyponym_canvas.stroke_style = "black"
       self.hyponym_canvas.begin_path()
@@ -239,7 +242,9 @@ class Home_page(Home_pageTemplate):
     self.meronym_canvas.fill_rect(0, 0, self.meronym_canvas.get_width(), self.meronym_canvas.get_height())
     meronyms = anvil.server.call('get_meronyms', word)
     if not meronyms:
-      self.meronym_canvas.add_component(Label(text="Không có meronyms để vẽ"))
+      self.meronym_canvas.fill_style = "black"
+      self.meronym_canvas.font = "16px Arial"
+      self.meronym_canvas.fill_text("Không có meronyms để vẽ", 10, 20)
       return
 
     # Tọa độ cơ bản
@@ -255,7 +260,8 @@ class Home_page(Home_pageTemplate):
     self.meronym_canvas.arc(center_x, center_y, radius, 0, 2 * math.pi)
     self.meronym_canvas.fill()
     self.meronym_canvas.fill_style = "white"
-    self.meronym_canvas.fill_text(word, center_x - radius/2, center_y + 5)
+    self.meronym_canvas.font = "12px Arial"
+    self.meronym_canvas.fill_text(word, center_x - (len(word) * 3), center_y + 5)
 
     # Vẽ meronyms xung quanh
     angle_step = 2 * math.pi / len(meronyms) if meronyms else 0
@@ -268,7 +274,7 @@ class Home_page(Home_pageTemplate):
       self.meronym_canvas.arc(x, y, radius, 0, 2 * math.pi)
       self.meronym_canvas.fill()
       self.meronym_canvas.fill_style = "white"
-      self.meronym_canvas.fill_text(mer, x - radius/2, y + 5)
+      self.meronym_canvas.fill_text(mer, x - (len(mer) * 3), y + 5)
       # Vẽ đường nối
       self.meronym_canvas.stroke_style = "black"
       self.meronym_canvas.begin_path()

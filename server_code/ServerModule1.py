@@ -29,7 +29,7 @@ def get_image_url(word):
   try:
     # Unsplash API (cần Access Key, giả lập URL cho ví dụ)
     # Đăng ký tại https://unsplash.com/developers để lấy YOUR_ACCESS_KEY
-    url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=YOUR_ACCESS_KEY"
+    url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=xdz1FY6iYimqqxpSaE1KWgyW5LO6HphF-CHGI0Ty7mk"
     response = anvil.http.request(url, method="GET", json=True)
     if response.get('results'):
       return response['results'][0]['urls']['small']
@@ -264,14 +264,14 @@ def get_word_info(vocab_input):
 
 @anvil.server.callable
 def get_word_of_the_day():
-  """Hàm lấy từ của ngày với định nghĩa và ví dụ rõ ràng hơn"""
+  """Hàm lấy từ của ngày"""
   try:
     all_synsets = list(wn.all_synsets())
     if not all_synsets:
       raise Exception("Không thể lấy danh sách từ từ WordNet.")
 
     random_synset = random.choice(all_synsets)
-    word = random_synset.lemma_names()[0].replace('_', ' ')
+    word = random_synset.lemma_names()[0]
 
     doc = nlp(word)
     result = []
@@ -290,29 +290,12 @@ def get_word_of_the_day():
       definition = synset.definition()
       result.append(f"Định nghĩa: {definition}")
 
-      # Cung cấp giải thích thêm cho định nghĩa
-      if definition == "terminate" and pos == "v":
-        result.append("Giải thích: Nghĩa là 'chấm dứt' hoặc 'kết thúc', thường dùng để chỉ việc dừng lại một hành động hoặc trạng thái, ví dụ: chấm dứt hợp đồng (break a contract).")
-
       examples = synset.examples()
       if examples:
         result.append("Câu ví dụ:")
-        # Lọc ví dụ phù hợp hơn
-        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]  # Loại bỏ ví dụ gây nhầm lẫn
-        if filtered_examples:
-          result.append(f"- {filtered_examples[0]}")
-        else:
-          # Thêm ví dụ tự tạo nếu không có ví dụ phù hợp
-          if definition == "terminate" and pos == "v":
-            result.append("- They decided to break the agreement.")
-          else:
-            result.append(f"- {examples[0]}")
+        result.append(f"- {examples[0]}")
       else:
-        if definition == "terminate" and pos == "v":
-          result.append("Câu ví dụ:")
-          result.append("- They decided to break the agreement.")
-        else:
-          result.append("Không có ví dụ")
+        result.append("Không có ví dụ")
 
       result.append("")
 

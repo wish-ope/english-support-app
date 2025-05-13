@@ -4,7 +4,7 @@ components_by_slot:
     - components:
       - layout_properties: {}
         name: input_text
-        properties: {placeholder: Enter to search..., role: outlined, text: ''}
+        properties: {placeholder: Enter to search..., role: input-error, text: ''}
         type: TextBox
       layout_properties: {grid_position: 'ATCKRX,BFEPRA'}
       name: data_row_panel_1
@@ -41,7 +41,7 @@ components_by_slot:
     - components:
       - layout_properties: {grid_position: 'ZOXDGN,HKLZBC'}
         name: drop_down_1
-        properties: {}
+        properties: {role: input-error}
         type: DropDown
       - layout_properties: {grid_position: 'IERHXU,ULBXUR'}
         name: label_1
@@ -51,12 +51,11 @@ components_by_slot:
         - components: []
           layout_properties: {grid_position: 'RHURHP,UPGUSR'}
           name: synonym_panel
-          properties:
-            role: [scrollable-panel]
+          properties: {role: null}
           type: ColumnPanel
         layout_properties: {grid_position: 'JIUBFY,QEFVTV'}
         name: outlined_card_1
-        properties: {role: outlined-card}
+        properties: {background: 'theme:Primary', role: outlined-card}
         type: ColumnPanel
       - layout_properties: {grid_position: 'MOYLDN,GTYQBI'}
         name: label_2
@@ -124,9 +123,13 @@ components_by_slot:
       type: ColumnPanel
     - components:
       - components:
-        - layout_properties: {grid_position: 'BQLRTC,NXLLLL'}
+        - layout_properties: {grid_position: 'FYPVOJ,XURRXJ'}
           name: detail_label
-          properties: {role: scrollable-panel, text: Chọn một từ để xem chi tiết.}
+          properties:
+            role: scrollable-panel
+            spacing:
+              margin: [0, null, null, null]
+            text: Chọn một từ để xem chi tiết.
           type: Label
         - layout_properties: {grid_position: 'TMNSIJ,RIMRTL'}
           name: word_image
@@ -137,7 +140,8 @@ components_by_slot:
         properties:
           role: outlined-card
           spacing:
-            padding: [114, null, 105, null]
+            margin: [0, null, null, null]
+            padding: [3, null, 105, null]
         type: ColumnPanel
       layout_properties: {grid_position: 'YMLHNL,ZPRBDA DAGHWO,XYHYQU'}
       name: column_panel_3

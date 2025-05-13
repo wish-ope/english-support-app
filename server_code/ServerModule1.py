@@ -15,20 +15,14 @@ try:
   import en_core_web_sm
   nltk.download('wordnet', quiet=True)
   nltk.download('omw-1.4', quiet=True)
-  nltk.download('punkt', quiet=True)
-  nltk.download('averaged_perceptron_tagger', quiet=True)
   nlp = en_core_web_sm.load()
   nlp.add_pipe("spacy_wordnet", after='tagger')
-  if not wn.synsets('dog'):
-    raise Exception("Không thể tải WordNet từ NLTK. Vui lòng kiểm tra kết nối hoặc cài đặt lại.")
 except Exception as e:
   raise Exception(f"Không thể tải mô hình ngôn ngữ hoặc WordNet: {str(e)}")
 
 def get_image_url(word):
   """Hàm lấy URL ảnh minh họa từ Unsplash"""
   try:
-    # Unsplash API (cần Access Key, giả lập URL cho ví dụ)
-    # Đăng ký tại https://unsplash.com/developers để lấy YOUR_ACCESS_KEY
     url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=xdz1FY6iYimqqxpSaE1KWgyW5LO6HphF-CHGI0Ty7mk"
     response = anvil.http.request(url, method="GET", json=True)
     if response.get('results'):
@@ -123,21 +117,34 @@ def get_meronyms(vocab_input):
     raise Exception(f"Lỗi khi lấy meronyms: {str(e)}")
 
 @anvil.server.callable
+def get_tokens(text):
+  """Hàm trả về danh sách từ từ SpaCy Doc object"""
+  if not text or not text.strip():
+    raise ValueError("Văn bản nhập vào không hợp lệ")
+
+  try:
+    doc = nlp(text.strip())
+    tokens = [token.text for token in doc]
+    print(f"Danh sách từ: {tokens}")
+    return tokens
+  except Exception as e:
+    print(f"Lỗi trong get_tokens: {str(e)}")
+    raise Exception(f"Lỗi khi tách từ: {str(e)}")
+
+@anvil.server.callable
 def analyze_sentence(sentence_input):
   """Hàm phân tích câu: token hóa, POS tagging và xác định vai trò từ"""
   if not sentence_input or not sentence_input.strip():
     raise ValueError("Câu nhập vào không hợp lệ")
 
   try:
-    tokens = nltk.word_tokenize(sentence_input.strip())
-    pos_tags = nltk.pos_tag(tokens)
-
+    doc = nlp(sentence_input.strip())
     result = []
-    for word, pos in pos_tags:
+    for token in doc:
       word_info = {
-        "word": word,
-        "pos": pos,
-        "role": get_word_role(pos)
+        "word": token.text,
+        "pos": token.pos_,
+        "role": get_word_role(token.pos_)
       }
       result.append(word_info)
 
@@ -148,31 +155,21 @@ def analyze_sentence(sentence_input):
     raise Exception(f"Lỗi khi phân tích câu: {str(e)}")
 
 def get_word_role(pos):
-  """Hàm ánh xạ POS tag thành vai trò ngữ pháp dễ hiểu"""
+  """Hàm ánh xạ POS tag của SpaCy thành vai trò ngữ pháp dễ hiểu"""
   pos_roles = {
-    'NN': 'Danh từ (Noun)',
-    'NNS': 'Danh từ số nhiều (Plural Noun)',
-    'NNP': 'Danh từ riêng (Proper Noun)',
-    'NNPS': 'Danh từ riêng số nhiều (Plural Proper Noun)',
-    'VB': 'Động từ (Verb)',
-    'VBD': 'Động từ quá khứ (Past Verb)',
-    'VBG': 'Động từ dạng V-ing (Gerund/Present Participle)',
-    'VBN': 'Động từ phân từ quá khứ (Past Participle)',
-    'VBP': 'Động từ hiện tại không ngôi thứ 3 (Present Verb, non-3rd person)',
-    'VBZ': 'Động từ hiện tại ngôi thứ 3 (Present Verb, 3rd person)',
-    'JJ': 'Tính từ (Adjective)',
-    'JJR': 'Tính từ so sánh (Comparative Adjective)',
-    'JJS': 'Tính từ cao nhất (Superlative Adjective)',
-    'RB': 'Trạng từ (Adverb)',
-    'RBR': 'Trạng từ so sánh (Comparative Adverb)',
-    'RBS': 'Trạng từ cao nhất (Superlative Adverb)',
-    'IN': 'Giới từ (Preposition)',
-    'DT': 'Mạo từ (Determiner)',
-    'PRP': 'Đại từ (Pronoun)',
-    'PRP$': 'Đại từ sở hữu (Possessive Pronoun)',
-    'CC': 'Liên từ (Conjunction)',
-    'TO': 'Giới từ "to" hoặc dạng "to" của động từ',
-    '.': 'Dấu câu (Punctuation)'
+    'NOUN': 'Danh từ (Noun)',
+    'VERB': 'Động từ (Verb)',
+    'ADJ': 'Tính từ (Adjective)',
+    'ADV': 'Trạng từ (Adverb)',
+    'PRON': 'Đại từ (Pronoun)',
+    'DET': 'Mạo từ (Determiner)',
+    'ADP': 'Giới từ (Preposition)',
+    'CONJ': 'Liên từ (Conjunction)',
+    'PUNCT': 'Dấu câu (Punctuation)',
+    'AUX': 'Trợ động từ (Auxiliary Verb)',
+    'NUM': 'Số từ (Numeral)',
+    'PART': 'Tiểu từ (Particle)',
+    'SCONJ': 'Liên từ phụ thuộc (Subordinating Conjunction)'
   }
   return pos_roles.get(pos, 'Không xác định')
 
@@ -264,14 +261,14 @@ def get_word_info(vocab_input):
 
 @anvil.server.callable
 def get_word_of_the_day():
-  """Hàm lấy từ của ngày"""
+  """Hàm lấy từ của ngày với định nghĩa và ví dụ rõ ràng hơn"""
   try:
     all_synsets = list(wn.all_synsets())
     if not all_synsets:
       raise Exception("Không thể lấy danh sách từ từ WordNet.")
 
     random_synset = random.choice(all_synsets)
-    word = random_synset.lemma_names()[0]
+    word = random_synset.lemma_names()[0].replace('_', ' ')
 
     doc = nlp(word)
     result = []
@@ -290,12 +287,29 @@ def get_word_of_the_day():
       definition = synset.definition()
       result.append(f"Định nghĩa: {definition}")
 
+      # Cung cấp giải thích thêm cho định nghĩa
+      if definition == "terminate" and pos == "v":
+        result.append("Giải thích: Nghĩa là 'chấm dứt' hoặc 'kết thúc', thường dùng để chỉ việc dừng lại một hành động hoặc trạng thái, ví dụ: chấm dứt hợp đồng (break a contract).")
+
       examples = synset.examples()
       if examples:
         result.append("Câu ví dụ:")
-        result.append(f"- {examples[0]}")
+        # Lọc ví dụ phù hợp hơn
+        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]  # Loại bỏ ví dụ gây nhầm lẫn
+        if filtered_examples:
+          result.append(f"- {filtered_examples[0]}")
+        else:
+          # Thêm ví dụ tự tạo nếu không có ví dụ phù hợp
+          if definition == "terminate" and pos == "v":
+            result.append("- They decided to break the agreement.")
+          else:
+            result.append(f"- {examples[0]}")
       else:
-        result.append("Không có ví dụ")
+        if definition == "terminate" and pos == "v":
+          result.append("Câu ví dụ:")
+          result.append("- They decided to break the agreement.")
+        else:
+          result.append("Không có ví dụ")
 
       result.append("")
 

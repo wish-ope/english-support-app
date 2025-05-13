@@ -14,6 +14,7 @@ import anvil.http
 try:
   import en_core_web_sm
   nltk.download('wordnet', quiet=True)
+  #hỗ trợ các hàm như get_meronyms, get_hyponyms
   nltk.download('omw-1.4', quiet=True)
   nlp = en_core_web_sm.load()
   nlp.add_pipe("spacy_wordnet", after='tagger')

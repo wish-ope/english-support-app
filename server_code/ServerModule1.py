@@ -46,7 +46,7 @@ def get_word_relations(vocab_input):
 
     print(f"Đang xử lý từ: {vocab_input}")
     print(f"Tokens: {[token.text for token in doc]}")
-
+    #lấy toàn bộ thông tin tại đây
     for token in doc:
       synsets = token._.wordnet.synsets()
       print(f"Synsets cho token '{token.text}': {len(synsets)}")

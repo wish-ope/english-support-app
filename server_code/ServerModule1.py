@@ -66,12 +66,14 @@ def add_vocab(new_vocab_data):
     )
 
 @anvil.server.callable
-def update_user(first_name, last_name, phone):
+def update_user(first_name, last_name, phone, avatar):
   curr_user = anvil.users.get_user()
   if curr_user:
     curr_user['first_name'] = first_name
     curr_user['last_name'] = last_name
-    curr_user['phone'] = phone
+    if avatar and phone:
+      curr_user['phone'] = phone
+      curr_user['user_avatar'] = avatar
 
 @anvil.server.callable
 def get_curr_user_data():

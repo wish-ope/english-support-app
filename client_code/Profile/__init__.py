@@ -13,11 +13,8 @@ class Profile(ProfileTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
     # anvil.server.call('get_curr_user_data')
-    current_user = anvil.users.get_user()
-    
-    self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
-    self.email_label.text = current_user['email']
-    self.phone_label.text = current_user['phone']
+
+    self.update_user()
     # if current_user is not None:
     #   #Hiển thị từ vựng theo dữ liệu người dùng
     #   self.data_table.items = app_tables.users.search(
@@ -25,6 +22,12 @@ class Profile(ProfileTemplate):
     #   )
     # # Any code you write here will run before the form opens.
 
+  def update_user(self):
+    current_user = anvil.users.get_user()
+    self.avatar_show.source = current_user['user_avatar']
+    self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
+    self.email_label.text = current_user['email']
+    self.phone_label.text = current_user['phone']
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.new_user = {}

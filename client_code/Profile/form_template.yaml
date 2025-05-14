@@ -2,8 +2,8 @@ components_by_slot:
   slot_1:
   - components:
     - layout_properties: {col_xs: 5, row: BLVUWQ, width_xs: 2}
-      name: image_1
-      properties: {border_radius: 50%, height: 127, role: null}
+      name: avatar_show
+      properties: {border_radius: 20%, height: 127, role: null}
       type: Image
     - layout_properties: {col_xs: 5, row: GJFWRR, width_xs: 2}
       name: name_label

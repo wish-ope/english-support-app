@@ -15,7 +15,7 @@ class Home_page(Home_pageTemplate):
     # If user is logged in, display the add button
     self.curr_user = anvil.users.get_user()
     self.check_user_info()
-    self.
+    # self.
     if self.curr_user == None:
       self.add_btn.visible = False
     else:

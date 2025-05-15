@@ -22,13 +22,14 @@ class User_form(User_formTemplate):
 
   def save_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
+    avatar = self.selected_avatar
     first = self.firstName_input.text
     last = self.lastName_input.text
     phone = self.phone_input.text
-    avatar = self.selected_avatar
-    if first and last:
-      anvil.server.call('update_user',first, last, phone, avatar)
-      self.raise_event('x-close-alert', value=True)
+
+    # if first and last:
+    anvil.server.call('update_user', avatar, first, last, phone)
+    self.raise_event('x-close-alert', value=True)
 
 
   def image_uploader_change(self, file, **event_args):

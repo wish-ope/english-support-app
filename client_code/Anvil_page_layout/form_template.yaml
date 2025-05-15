@@ -1,5 +1,16 @@
 components:
 - components:
+  - components:
+    - layout_properties: {}
+      name: button_1
+      properties: {text: jnlkj}
+      type: Button
+    - name: image_1
+      properties: {height: 32.79998779296875}
+      type: Image
+    name: flow_panel_1
+    properties: {}
+    type: FlowPanel
   - event_bindings: {click: logout_button_click}
     layout_properties: {}
     name: logout_button

@@ -13,8 +13,6 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     # Set Form properties and Data Bindings.
 
     self.init_components(**properties)
-    self.content_panel.clear()
-    self.content_panel.add_component(Home_page(layout=self))
     self.curr_user = anvil.users.get_user()
 
     if not self.curr_user:
@@ -77,11 +75,13 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def about_us_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('About_us')
+    self.user.visible = True
     # self.login_button.visible = False
 
   def profile_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('Profile')
+    self.user.visible = False
 
   def home_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -91,6 +91,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def notebook_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('NoteBook')
+    self.user.visible = True
 
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""

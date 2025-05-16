@@ -9,12 +9,13 @@ from ..User_form import User_form
 
 
 class Profile(ProfileTemplate):
-  def __init__(self, **properties):
+  def __init__(self, layout = None, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
     # anvil.server.call('get_curr_user_data')
 
-    self.update_user()
+    self.update_user_profile()
+    form = Profile(layout = self.layout)
     # if current_user is not None:
     #   #Hiển thị từ vựng theo dữ liệu người dùng
     #   self.data_table.items = app_tables.users.search(
@@ -22,7 +23,7 @@ class Profile(ProfileTemplate):
     #   )
     # # Any code you write here will run before the form opens.
 
-  def update_user(self):
+  def update_user_profile(self):
     current_user = anvil.users.get_user()
     self.avatar_show.source = current_user['user_avatar']
     self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
@@ -41,6 +42,7 @@ class Profile(ProfileTemplate):
       dismissible = False
     )
     if self.save_clicked:
+      
       open_form('Profile')
   
 

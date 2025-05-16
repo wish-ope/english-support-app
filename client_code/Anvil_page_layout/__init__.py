@@ -14,7 +14,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
 
     self.init_components(**properties)
     self.curr_user = anvil.users.get_user()
-
+    
     if not self.curr_user:
       self.hide_user_bth() 
     else:
@@ -25,8 +25,9 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     # Any code you write here will run before the form opens.
   def update_user(self):
     current_user = anvil.users.get_user()
-    self.avatar.source = current_user['user_avatar']
-    self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
+    if current_user:
+      self.avatar.source = current_user['user_avatar']
+      self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
 
   
   

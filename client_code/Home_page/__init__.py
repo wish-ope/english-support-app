@@ -19,7 +19,6 @@ class Home_page(Home_pageTemplate):
     if self.curr_user == None:
       self.add_btn.visible = False
     else:
-
       self.add_btn.visible = False
       
   def input_text_change(self, **event_args):

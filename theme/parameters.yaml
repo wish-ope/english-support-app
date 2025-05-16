@@ -337,3 +337,7 @@ roles:
   name: box-shadow
 - components: [Label]
   name: scrollable-panel
+- components: [Label]
+  name: no-wrap
+- components: [Link]
+  name: flex-link

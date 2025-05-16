@@ -57,7 +57,6 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     if self.curr_user is not None:
       self.show_user_bth()
       self.update_user()
-      # open_form('Anvil_page_layout')
       open_form('Home_page')
       
     
@@ -76,34 +75,26 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def about_us_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('About_us')
-    self.user.visible = True
-    # self.login_button.visible = False
 
   def profile_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('Profile')
-    self.user.visible = False
 
   def home_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('Home_page')
-    self.user.visible = True
 
   def notebook_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
     open_form('NoteBook')
-    self.user.visible = True
 
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     pass
     
-
-
   def user_click(self, **event_args):
     """This method is called when the link is clicked"""
     open_form('Profile')
-    self.user.visible = False
  
     
 

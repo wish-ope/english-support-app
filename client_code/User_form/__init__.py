@@ -8,9 +8,10 @@ from anvil.tables import app_tables
 
 
 class User_form(User_formTemplate):
-  def __init__(self, **properties):
+  def __init__(self,layout = None, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
+    self.layout = layout
     self.selected_avatar = None
     current_user = anvil.users.get_user()
     self.avatar_image.source = current_user['user_avatar']

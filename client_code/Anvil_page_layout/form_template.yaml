@@ -2,11 +2,14 @@ components:
 - components:
   - components:
     - components:
-      - layout_properties: {full_width_row: false, grid_position: 'UIGTWB,UOVWOO', row_background: ''}
+      - data_bindings:
+        - {code: 'self.item['''']', property: tag, writeback: false}
+        layout_properties: {full_width_row: false, grid_position: 'UIGTWB,UOVWOO', row_background: ''}
         name: user_name
         properties:
           align: right
           font_size: 15
+          role: no-wrap
           spacing:
             padding: [4, null, null, null]
         type: Label
@@ -22,15 +25,19 @@ components:
       layout_properties: {}
       name: user
       properties:
+        col_spacing: small
         col_widths: '{"UOVWOO":40,"FVNSQS":20}'
-        role: null
+        role: flex-link
         spacing:
           margin: [1, null, 6, null]
           padding: [0, null, 0, null]
-        wrap_on: never
+        spacing_above: small
+        spacing_below: small
+        wrap_on: mobile
       type: Link
+    layout_properties: {expand: false, width: 150.5499267578125}
     name: flow_panel_1
-    properties: {}
+    properties: {spacing_above: small, spacing_below: small}
     type: FlowPanel
   - event_bindings: {click: logout_button_click}
     layout_properties: {}

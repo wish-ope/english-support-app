@@ -15,7 +15,7 @@ class Profile(ProfileTemplate):
     # anvil.server.call('get_curr_user_data')
 
     self.update_user_profile()
-    form = Profile(layout = self.layout)
+
     # if current_user is not None:
     #   #Hiển thị từ vựng theo dữ liệu người dùng
     #   self.data_table.items = app_tables.users.search(
@@ -32,17 +32,16 @@ class Profile(ProfileTemplate):
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.new_user = {}
-    # form = User_form(item = self.new_user)
-    # form.show_btn = True
+    self.form = User_form(layout = self.layout)
     self.save_clicked = alert(
-      content = User_form(item = self.new_user),
+      content = self.form,
       title = "Edit Profile",
       large = True,
       buttons = [],
       dismissible = False
     )
     if self.save_clicked:
-      
-      open_form('Profile')
+      self.layout.update_user()
+      self.update_user_profile()
   
 

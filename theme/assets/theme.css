@@ -2,14 +2,9 @@
  This CSS implements the Material Design 3 look and feel for Anvil apps.
  **/
 /* avatar image*/
-.anvil-role.flex-link {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.anvil-role.no-wrap{
-  white-space: nowrap;
+
+.anvil-role.max-content-label{
+  max-width: ;
 }
 .anvil-role-avatar-image{
   width: 100px;
@@ -63,6 +58,7 @@ a>.anvil-component-icon.right_edge-icon,
   padding-bottom: 8px;
 }
 .anvil-label>.label-text, a>.link-text {
+  width: max-content;
   padding-top: 8px;
   padding-bottom: 8px;
 }

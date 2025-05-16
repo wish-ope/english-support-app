@@ -2,14 +2,13 @@ components:
 - components:
   - components:
     - components:
-      - data_bindings:
-        - {code: 'self.item['''']', property: tag, writeback: false}
+      - data_bindings: []
         layout_properties: {full_width_row: false, grid_position: 'UIGTWB,UOVWOO', row_background: ''}
         name: user_name
         properties:
           align: right
           font_size: 15
-          role: no-wrap
+          role: null
           spacing:
             padding: [4, null, null, null]
         type: Label
@@ -20,14 +19,15 @@ components:
           display_mode: shrink_to_fit
           height: 32.19996643066406
           margin: [9, 0, null, 3]
+          source: _/theme/picture/avatar.jpg
         type: Image
       event_bindings: {click: user_click}
       layout_properties: {}
       name: user
       properties:
-        col_spacing: small
+        col_spacing: medium
         col_widths: '{"UOVWOO":40,"FVNSQS":20}'
-        role: flex-link
+        role: null
         spacing:
           margin: [1, null, 6, null]
           padding: [0, null, 0, null]
@@ -35,7 +35,7 @@ components:
         spacing_below: small
         wrap_on: mobile
       type: Link
-    layout_properties: {expand: false, width: 150.5499267578125}
+    layout_properties: {expand: false, width: 152.724951171875}
     name: flow_panel_1
     properties: {spacing_above: small, spacing_below: small}
     type: FlowPanel

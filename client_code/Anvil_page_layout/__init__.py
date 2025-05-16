@@ -27,12 +27,14 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def update_user(self):
     current_user = anvil.users.get_user()
     if current_user:
-      if not current_user['user_avatar']:
-        # Nếu không có avatar, sử dụng hình ảnh mặc định
-        self.avatar.source = "_/theme/picture/avatar.jpg"
-      else:
+      if current_user['user_avatar']:
         # Nếu có, cập nhật avatar cho người dùng
         self.avatar.source = current_user['user_avatar']
+      else:
+        # Nếu không có avatar, sử dụng hình ảnh mặc định
+        self.avatar.source = "_/theme/picture/avatar.jpg"
+        # Nếu có, cập nhật avatar cho người dùng
+        
       self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
 
   

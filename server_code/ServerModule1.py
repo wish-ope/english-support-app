@@ -33,90 +33,91 @@ def get_image_url(word):
     return None
 
 @anvil.server.callable
-def get_all_word_relations(vocab_input):
-  """Hàm lấy tất cả các mối quan hệ từ vựng trong một lần gọi"""
-  if not vocab_input or not vocab_input.strip():
-    raise ValueError("Từ nhập vào không hợp lệ")
-
-  try:
-    doc = nlp(vocab_input.strip())
-    synonyms = set()
-    antonyms = set()
-    hyponyms = set()
-    meronyms = set()
-
-    print(f"Đang xử lý từ: {vocab_input}")
-    print(f"Tokens: {[token.text for token in doc]}")
-
-    for token in doc:
-      synsets = token._.wordnet.synsets()
-      print(f"Synsets cho token '{token.text}': {len(synsets)}")
-      for synset in synsets:
-        for lemma in synset.lemma_names():
-          synonyms.add(lemma)
-        for lemma in synset.lemmas():
-          antonym_list = lemma.antonyms()
-          for antonym in antonym_list:
-            antonyms.add(antonym.name())
-        for hyponym in synset.hyponyms():
-          hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
-        for meronym in synset.part_meronyms():
-          meronyms.update(lemma.name() for lemma in meronym.lemmas())
-        for meronym in synset.substance_meronyms():
-          meronyms.update(lemma.name() for lemma in meronym.lemmas())
-
-    print(f"Danh sách đồng nghĩa: {list(synonyms)}")
-    print(f"Danh sách trái nghĩa: {list(antonyms)}")
-    print(f"Danh sách hyponyms: {list(hyponyms)}")
-    print(f"Danh sách meronyms: {list(meronyms)}")
-
-    return {
-      "synonyms": list(synonyms),
-      "antonyms": list(antonyms),
-      "hyponyms": list(hyponyms),
-      "meronyms": list(meronyms)
-    }
-  except Exception as e:
-    print(f"Lỗi trong get_all_word_relations: {str(e)}")
-    raise Exception(f"Lỗi khi lấy mối quan hệ từ vựng: {str(e)}")
-
-@anvil.server.callable
-def get_tokens(text):
-  """Hàm trả về danh sách từ từ SpaCy Doc object"""
+def process_input(text):
+  """Hàm xử lý đầu vào: phân biệt từ/câu và trả về kết quả tương ứng"""
   if not text or not text.strip():
     raise ValueError("Văn bản nhập vào không hợp lệ")
 
   try:
+    # Tạo doc một lần duy nhất
     doc = nlp(text.strip())
     tokens = [token.text for token in doc]
     print(f"Danh sách từ: {tokens}")
-    return tokens
-  except Exception as e:
-    print(f"Lỗi trong get_tokens: {str(e)}")
-    raise Exception(f"Lỗi khi tách từ: {str(e)}")
 
-@anvil.server.callable
-def analyze_sentence(sentence_input):
-  """Hàm phân tích câu: token hóa, POS tagging và xác định vai trò từ"""
-  if not sentence_input or not sentence_input.strip():
-    raise ValueError("Câu nhập vào không hợp lệ")
+    if len(tokens) == 1:
+      # Xử lý từ đơn
+      word = tokens[0]
+      # Kiểm tra cơ sở dữ liệu
+      word_data = get_word_data(word)
+      if word_data:
+        print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
+        return {
+          "type": "word",
+          "word": word,
+          "relations": word_data["relations"],
+          "detailed_info": word_data["detailed_info"]
+        }
+      else:
+        print(f"Không tìm thấy từ '{word}' trong cơ sở dữ liệu, xử lý bằng SpaCy...")
+        # Lấy mối quan hệ từ vựng
+        synonyms = set()
+        antonyms = set()
+        hyponyms = set()
+        meronyms = set()
 
-  try:
-    doc = nlp(sentence_input.strip())
-    result = []
-    for token in doc:
-      word_info = {
-        "word": token.text,
-        "pos": token.pos_,
-        "role": get_word_role(token.pos_)
+        for token in doc:
+          synsets = token._.wordnet.synsets()
+          for synset in synsets:
+            for lemma in synset.lemma_names():
+              synonyms.add(lemma)
+            for lemma in synset.lemmas():
+              antonym_list = lemma.antonyms()
+              for antonym in antonym_list:
+                antonyms.add(antonym.name())
+            for hyponym in synset.hyponyms():
+              hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
+            for meronym in synset.part_meronyms():
+              meronyms.update(lemma.name() for lemma in meronym.lemmas())
+            for meronym in synset.substance_meronyms():
+              meronyms.update(lemma.name() for lemma in meronym.lemmas())
+
+        relations = {
+          "synonyms": list(synonyms),
+          "antonyms": list(antonyms),
+          "hyponyms": list(hyponyms),
+          "meronyms": list(meronyms)
+        }
+
+        # Lấy thông tin chi tiết
+        detailed_info = get_word_info(word)
+        # Lưu vào cơ sở dữ liệu
+        save_word_data(word, relations, detailed_info)
+
+        return {
+          "type": "word",
+          "word": word,
+          "relations": relations,
+          "detailed_info": detailed_info
+        }
+    else:
+      # Xử lý câu
+      result = []
+      for token in doc:
+        word_info = {
+          "word": token.text,
+          "pos": token.pos_,
+          "role": get_word_role(token.pos_)
+        }
+        result.append(word_info)
+
+      print(f"Kết quả phân tích câu: {result}")
+      return {
+        "type": "sentence",
+        "sentence_analysis": result
       }
-      result.append(word_info)
-
-    print(f"Kết quả phân tích câu: {result}")
-    return result
   except Exception as e:
-    print(f"Lỗi trong analyze_sentence: {str(e)}")
-    raise Exception(f"Lỗi khi phân tích câu: {str(e)}")
+    print(f"Lỗi trong process_input: {str(e)}")
+    raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
 
 def get_word_role(pos):
   """Hàm ánh xạ POS tag của SpaCy thành vai trò ngữ pháp dễ hiểu"""
@@ -225,56 +226,43 @@ def get_word_info(vocab_input):
 
 @anvil.server.callable
 def get_word_of_the_day():
-  """Hàm lấy từ của ngày với định nghĩa và ví dụ rõ ràng hơn"""
+  """Hàm lấy từ của ngày từ cơ sở dữ liệu"""
   try:
-    all_synsets = list(wn.all_synsets())
-    if not all_synsets:
-      raise Exception("Không thể lấy danh sách từ từ WordNet.")
+    current_user = anvil.users.get_user()
+    if not current_user:
+      print("Không có người dùng đăng nhập, lấy từ ngẫu nhiên từ WordNet.")
+      all_synsets = list(wn.all_synsets())
+      if not all_synsets:
+        raise Exception("Không thể lấy danh sách từ từ WordNet.")
 
-    random_synset = random.choice(all_synsets)
-    word = random_synset.lemma_names()[0].replace('_', ' ')
+      random_synset = random.choice(all_synsets)
+      word = random_synset.lemma_names()[0].replace('_', ' ')
+      detailed_info = get_word_info(word)
+      return f"**Từ của ngày: {word}**\n\n{detailed_info}"
 
-    doc = nlp(word)
-    result = []
+    vocab_rows = app_tables.vocab.search(User=current_user)
+    if not vocab_rows:
+      print("Không có từ nào trong cơ sở dữ liệu, lấy từ ngẫu nhiên từ WordNet.")
+      all_synsets = list(wn.all_synsets())
+      if not all_synsets:
+        raise Exception("Không thể lấy danh sách từ từ WordNet.")
 
-    synsets = doc[0]._.wordnet.synsets()
-    if not synsets:
-      return f"Không tìm thấy thông tin cho từ '{word}'."
+      random_synset = random.choice(all_synsets)
+      word = random_synset.lemma_names()[0].replace('_', ' ')
+      detailed_info = get_word_info(word)
+      return f"**Từ của ngày: {word}**\n\n{detailed_info}"
 
-    for idx, synset in enumerate(synsets[:1], 1):
-      result.append(f"**Từ của ngày: {word}**")
+    vocab_list = list(vocab_rows)
+    random_row = random.choice(vocab_list)
+    word = random_row['Vocab']
+    detailed_info = random_row['DetailedInfo']
 
-      pos = synset.pos()
-      pos_desc = get_pos_description(pos)
-      result.append(f"Loại từ (POS): {pos_desc}")
+    if not detailed_info:
+      print(f"Không có DetailedInfo cho từ '{word}', lấy từ WordNet.")
+      detailed_info = get_word_info(word)
+      random_row.update(DetailedInfo=detailed_info)
 
-      definition = synset.definition()
-      result.append(f"Định nghĩa: {definition}")
-
-      if definition == "terminate" and pos == "v":
-        result.append("Giải thích: Nghĩa là 'chấm dứt' hoặc 'kết thúc', thường dùng để chỉ việc dừng lại một hành động hoặc trạng thái, ví dụ: chấm dứt hợp đồng (break a contract).")
-
-      examples = synset.examples()
-      if examples:
-        result.append("Câu ví dụ:")
-        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]
-        if filtered_examples:
-          result.append(f"- {filtered_examples[0]}")
-        else:
-          if definition == "terminate" and pos == "v":
-            result.append("- They decided to break the agreement.")
-          else:
-            result.append(f"- {examples[0]}")
-      else:
-        if definition == "terminate" and pos == "v":
-          result.append("Câu ví dụ:")
-          result.append("- They decided to break the agreement.")
-        else:
-          result.append("Không có ví dụ")
-
-      result.append("")
-
-    return "\n".join(result)
+    return f"**Từ của ngày: {word}**\n\n{detailed_info}"
   except Exception as e:
     raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")
 
@@ -287,10 +275,8 @@ def save_word_data(word, relations, detailed_info):
       print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
       return
 
-    # Kiểm tra xem từ đã có trong bảng chưa
     existing_row = app_tables.vocab.get(Vocab=word, User=current_user)
     if existing_row:
-      # Cập nhật bản ghi hiện có
       existing_row.update(
         Synonyms=json.dumps(relations["synonyms"]),
         Antonyms=json.dumps(relations["antonyms"]),
@@ -300,7 +286,6 @@ def save_word_data(word, relations, detailed_info):
         DetailedInfo=detailed_info
       )
     else:
-      # Thêm bản ghi mới
       app_tables.vocab.add_row(
         Vocab=word,
         Synonyms=json.dumps(relations["synonyms"]),

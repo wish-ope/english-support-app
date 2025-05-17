@@ -289,7 +289,7 @@ roles:
   display_in_toolbox: true
   name: outlined-card
   title: Outlined Card
-- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
+- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel, TextBox, Button, DropDown]
   display_in_toolbox: false
   name: elevated-card
   title: Elevated Card

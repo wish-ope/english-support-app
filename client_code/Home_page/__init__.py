@@ -7,6 +7,30 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..User_form import User_form
 
+class WordRelations:
+  """Class để lưu trữ các mối quan hệ từ vựng"""
+  def __init__(self, synonyms=None, antonyms=None, hyponyms=None, meronyms=None):
+    self.synonyms = synonyms if synonyms is not None else []
+    self.antonyms = antonyms if antonyms is not None else []
+    self.hyponyms = hyponyms if hyponyms is not None else []
+    self.meronyms = meronyms if meronyms is not None else []
+
+  def get_relations(self, relation_type):
+    """Lấy dữ liệu dựa trên loại mối quan hệ"""
+    if relation_type == "synonyms":
+      return self.synonyms
+    elif relation_type == "antonyms":
+      return self.antonyms
+    elif relation_type == "hyponyms":
+      return self.hyponyms
+    elif relation_type == "meronyms":
+      return self.meronyms
+    return []
+
+  def has_data(self, relation_type):
+    """Kiểm tra xem loại mối quan hệ có dữ liệu không"""
+    return len(self.get_relations(relation_type)) > 0
+
 class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     # Khởi tạo giao diện
@@ -17,20 +41,21 @@ class Home_page(Home_pageTemplate):
     self.check_user_info()
     self.add_btn.visible = self.curr_user is not None
 
-    # Thiết lập ban đầu cho các panel
-    self.clear_all_panels()
+    # Thiết lập ban đầu
+    self.result_panel.clear()
+    self.relation_panel.clear()  # Xóa panel mối quan hệ ban đầu
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
-
-    # Đảm bảo panel hiển thị
-    self.synonym_panel.visible = True
-    self.antonym_panel.visible = True
-    self.hyponym_panel.visible = True
-    self.meronym_panel.visible = True
-    self.sentence_analysis_panel.visible = True
-    self.word_of_day_content.visible = True
-
-    # Ẩn ảnh ban đầu
     self.word_image.visible = False
+
+    # Cấu hình dropdown
+    self.category_dropdown.items = [
+      ("Đồng nghĩa", "synonyms"),
+      ("Trái nghĩa", "antonyms"),
+      ("Hyponyms", "hyponyms"),
+      ("Meronyms", "meronyms")
+    ]
+    self.category_dropdown.selected_value = "synonyms"
+    self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
 
     # Hiển thị từ của ngày
     try:
@@ -39,13 +64,13 @@ class Home_page(Home_pageTemplate):
     except Exception as e:
       self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
 
-  def clear_all_panels(self):
-    """Xóa nội dung của tất cả các panel"""
-    self.synonym_panel.clear()
-    self.antonym_panel.clear()
-    self.hyponym_panel.clear()
-    self.meronym_panel.clear()
-    self.sentence_analysis_panel.clear()
+  def clear_all(self):
+    """Xóa nội dung panel kết quả"""
+    self.result_panel.clear()
+
+  def clear_relations(self):
+    """Xóa nội dung panel mối quan hệ"""
+    self.relation_panel.clear()
 
   def search_btn_click(self, **event_args):
     """Xử lý khi nút tìm kiếm được nhấn"""
@@ -55,102 +80,173 @@ class Home_page(Home_pageTemplate):
       return
 
     try:
-      tokens = input_text.split()
+      # Sử dụng SpaCy để tách từ
+      tokens = anvil.server.call('get_tokens', input_text)
       if len(tokens) == 1:
-        self.analyze_single_word(input_text)
+        self.current_word = input_text
+        # Kiểm tra cơ sở dữ liệu trước
+        word_data = anvil.server.call('get_word_data', input_text)
+        if word_data:
+          print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{input_text}'")
+          self.word_relations = WordRelations(
+            synonyms=word_data["relations"]["synonyms"],
+            antonyms=word_data["relations"]["antonyms"],
+            hyponyms=word_data["relations"]["hyponyms"],
+            meronyms=word_data["relations"]["meronyms"]
+          )
+        else:
+          print(f"Không tìm thấy từ '{input_text}' trong cơ sở dữ liệu, gọi server...")
+          relations_data = anvil.server.call('get_all_word_relations', input_text)
+          self.word_relations = WordRelations(
+            synonyms=relations_data["synonyms"],
+            antonyms=relations_data["antonyms"],
+            hyponyms=relations_data["hyponyms"],
+            meronyms=relations_data["meronyms"]
+          )
+          # Lấy nghĩa chi tiết và lưu vào cơ sở dữ liệu
+          detailed_info = anvil.server.call('get_word_info', input_text)
+          anvil.server.call('save_word_data', input_text, relations_data, detailed_info)
+
+        self.update_dropdown_options()
+        self.update_relation_panel()  # Cập nhật panel mối quan hệ
+        self.update_word_details(input_text)  # Hiển thị nghĩa chi tiết
       else:
         self.analyze_sentence(input_text)
-
-      self.detail_label.text = "Chọn một từ để xem chi tiết."
+        self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
+        self.clear_relations()  # Xóa panel mối quan hệ khi phân tích câu
 
     except Exception as e:
       alert(f"Có lỗi xảy ra: {str(e)}")
       print(f"Error in search_btn_click: {str(e)}")
 
-  def analyze_single_word(self, word):
-    """Phân tích một từ: đồng nghĩa, trái nghĩa, hyponyms, meronyms"""
-    result = anvil.server.call('get_word_relations', word)
-
-    print(f"Kết quả từ server: {result}")
-
-    self.clear_all_panels()
-
-    if not result["synonyms"] and not result["antonyms"]:
-      alert(f"Không tìm thấy đồng nghĩa hoặc trái nghĩa cho từ '{word}'.")
+  def update_dropdown_options(self):
+    """Cập nhật trạng thái của dropdown dựa trên từ nhập vào"""
+    if not hasattr(self, 'word_relations'):
+      self.category_dropdown.items = [("Không có dữ liệu", "none")]
       return
 
-    for syn in result["synonyms"]:
-      link = Link(text=syn, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = syn
-      link.add_event_handler('click', self.synonym_word_click)
-      self.synonym_panel.add_component(link)
+    # Tạo danh sách tùy chọn, loại bỏ các mục không có dữ liệu
+    enabled_items = []
+    for text, value in [
+      ("Đồng nghĩa", "synonyms"),
+      ("Trái nghĩa", "antonyms"),
+      ("Hyponyms", "hyponyms"),
+      ("Meronyms", "meronyms")
+    ]:
+      if self.word_relations.has_data(value):
+        enabled_items.append((text, value))
 
-    for ant in result["antonyms"]:
-      link = Link(text=ant, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = ant
-      link.add_event_handler('click', self.antonym_word_click)
-      self.antonym_panel.add_component(link)
+    # Nếu không có tùy chọn nào, thêm tùy chọn mặc định
+    if not enabled_items:
+      enabled_items = [("Không có dữ liệu", "none")]
 
-    hyponyms = anvil.server.call('get_hyponyms', word)
-    for hyp in hyponyms:
-      link = Link(text=hyp, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = hyp
-      link.add_event_handler('click', self.hyponym_word_click)
-      self.hyponym_panel.add_component(link)
+    self.category_dropdown.items = enabled_items
+    # Đảm bảo giá trị đã chọn vẫn hợp lệ
+    current_value = self.category_dropdown.selected_value
+    if current_value not in [item[1] for item in enabled_items]:
+      self.category_dropdown.selected_value = enabled_items[0][1] if enabled_items else "none"
+      self.update_relation_panel()
 
-    meronyms = anvil.server.call('get_meronyms', word)
-    for mer in meronyms:
-      link = Link(text=mer, role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = mer
-      link.add_event_handler('click', self.meronym_word_click)
-      self.meronym_panel.add_component(link)
+  def update_relation_panel(self):
+    """Cập nhật panel mối quan hệ dựa trên lựa chọn trong dropdown"""
+    if not hasattr(self, 'current_word') or not hasattr(self, 'word_relations'):
+      return
+
+    value = self.category_dropdown.selected_value
+    self.clear_relations()
+
+    try:
+      if value == "none":
+        result = []
+      else:
+        result = self.word_relations.get_relations(value)
+
+      if result:
+        for item in result:
+          link = Link(text=item, role="default", spacing_above="small", spacing_below="small")
+          link.tag.word = item
+          link.add_event_handler('click', self.result_word_click)
+          self.relation_panel.add_component(link)
+      else:
+        self.relation_panel.add_component(Label(text="Không có dữ liệu cho loại này."))
+
+    except Exception as e:
+      self.relation_panel.add_component(Label(text=f"Lỗi: {str(e)}"))
+
+  def category_dropdown_change(self, **event_args):
+    """Xử lý khi thay đổi lựa chọn trong dropdown, tự động cập nhật panel"""
+    if hasattr(self, 'word_relations'):
+      self.update_relation_panel()
+    else:
+      self.clear_relations()
+      self.relation_panel.add_component(Label(text="Vui lòng tìm kiếm trước!"))
 
   def analyze_sentence(self, sentence):
     """Phân tích một câu: token hóa, POS tagging, vai trò ngữ pháp"""
-    self.clear_all_panels()
+    self.clear_all()
 
-    sentence_analysis = anvil.server.call('analyze_sentence', sentence)
+    try:
+      sentence_analysis = anvil.server.call('analyze_sentence', sentence)
+      for word_info in sentence_analysis:
+        word = word_info["word"]
+        role = word_info["role"]
+        link = Link(text=f"{word} ({role})", role="default", spacing_above="small", spacing_below="small")
+        link.tag.word = word
+        link.add_event_handler('click', self.sentence_word_click)
+        self.result_panel.add_component(link)
+    except Exception as e:
+      self.result_panel.add_component(Label(text=f"Lỗi: {str(e)}"))
 
-    print(f"Kết quả phân tích câu: {sentence_analysis}")
-
-    for word_info in sentence_analysis:
-      word = word_info["word"]
-      role = word_info["role"]
-      link = Link(text=f"{word} ({role})", role="default", spacing_above="small", spacing_below="small")
-      link.tag.word = word
-      link.add_event_handler('click', self.sentence_word_click)
-      self.sentence_analysis_panel.add_component(link)
-
-  def synonym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ đồng nghĩa"""
-    word = sender.tag.word
-    self.update_word_details(word)
-
-  def antonym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ trái nghĩa"""
-    word = sender.tag.word
-    self.update_word_details(word)
-
-  def hyponym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ hyponym"""
-    word = sender.tag.word
-    self.update_word_details(word)
-
-  def meronym_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ meronym"""
+  def result_word_click(self, sender, **event_args):
+    """Xử lý khi nhấp vào một từ trong panel mối quan hệ"""
     word = sender.tag.word
     self.update_word_details(word)
 
   def sentence_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ trong phân tích câu"""
     word = sender.tag.word
+    self.current_word = word
+    # Kiểm tra cơ sở dữ liệu trước
+    word_data = anvil.server.call('get_word_data', word)
+    if word_data:
+      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
+      self.word_relations = WordRelations(
+        synonyms=word_data["relations"]["synonyms"],
+        antonyms=word_data["relations"]["antonyms"],
+        hyponyms=word_data["relations"]["hyponyms"],
+        meronyms=word_data["relations"]["meronyms"]
+      )
+    else:
+      print(f"Không tìm thấy từ '{word}' trong cơ sở dữ liệu, gọi server...")
+      relations_data = anvil.server.call('get_all_word_relations', word)
+      self.word_relations = WordRelations(
+        synonyms=relations_data["synonyms"],
+        antonyms=relations_data["antonyms"],
+        hyponyms=relations_data["hyponyms"],
+        meronyms=relations_data["meronyms"]
+      )
+      # Lấy nghĩa chi tiết và lưu vào cơ sở dữ liệu
+      detailed_info = anvil.server.call('get_word_info', word)
+      anvil.server.call('save_word_data', word, relations_data, detailed_info)
+
+    # Hiển thị nghĩa chi tiết trước
     self.update_word_details(word)
+    self.update_dropdown_options()
+    self.update_relation_panel()  # Cập nhật panel mối quan hệ, giữ nguyên result_panel
 
   def update_word_details(self, word):
     """Cập nhật thông tin chi tiết và hiển thị ảnh"""
     try:
-      result = anvil.server.call('get_word_info', word)
-      lines = result.split('\n')
+      # Kiểm tra cơ sở dữ liệu trước
+      detailed_info = anvil.server.call('get_detailed_info', word)
+      if detailed_info:
+        print(f"Lấy nghĩa chi tiết từ cơ sở dữ liệu cho từ '{word}'")
+      else:
+        print(f"Không tìm thấy nghĩa chi tiết cho từ '{word}' trong cơ sở dữ liệu, gọi server...")
+        detailed_info = anvil.server.call('get_word_info', word)
+        anvil.server.call('save_detailed_info', word, detailed_info)
+
+      lines = detailed_info.split('\n')
       self.detail_label.text = "\n".join(line for line in lines if not line.startswith('**Ảnh minh họa:**'))
 
       # Hiển thị ảnh

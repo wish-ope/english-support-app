@@ -9,13 +9,12 @@ import nltk
 from nltk.corpus import wordnet as wn
 import random
 import anvil.http
+import json
 
 # Tải mô hình ngôn ngữ và WordNet
 try:
   import en_core_web_sm
   nltk.download('wordnet', quiet=True)
-  #hỗ trợ các hàm như get_meronyms, get_hyponyms
-  nltk.download('omw-1.4', quiet=True)
   nlp = en_core_web_sm.load()
   nlp.add_pipe("spacy_wordnet", after='tagger')
 except Exception as e:
@@ -34,8 +33,8 @@ def get_image_url(word):
     return None
 
 @anvil.server.callable
-def get_word_relations(vocab_input):
-  """Hàm lấy danh sách đồng nghĩa và trái nghĩa của từ"""
+def get_all_word_relations(vocab_input):
+  """Hàm lấy tất cả các mối quan hệ từ vựng trong một lần gọi"""
   if not vocab_input or not vocab_input.strip():
     raise ValueError("Từ nhập vào không hợp lệ")
 
@@ -43,10 +42,12 @@ def get_word_relations(vocab_input):
     doc = nlp(vocab_input.strip())
     synonyms = set()
     antonyms = set()
+    hyponyms = set()
+    meronyms = set()
 
     print(f"Đang xử lý từ: {vocab_input}")
     print(f"Tokens: {[token.text for token in doc]}")
-    #lấy toàn bộ thông tin tại đây
+
     for token in doc:
       synsets = token._.wordnet.synsets()
       print(f"Synsets cho token '{token.text}': {len(synsets)}")
@@ -57,65 +58,27 @@ def get_word_relations(vocab_input):
           antonym_list = lemma.antonyms()
           for antonym in antonym_list:
             antonyms.add(antonym.name())
+        for hyponym in synset.hyponyms():
+          hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
+        for meronym in synset.part_meronyms():
+          meronyms.update(lemma.name() for lemma in meronym.lemmas())
+        for meronym in synset.substance_meronyms():
+          meronyms.update(lemma.name() for lemma in meronym.lemmas())
 
     print(f"Danh sách đồng nghĩa: {list(synonyms)}")
     print(f"Danh sách trái nghĩa: {list(antonyms)}")
+    print(f"Danh sách hyponyms: {list(hyponyms)}")
+    print(f"Danh sách meronyms: {list(meronyms)}")
 
     return {
       "synonyms": list(synonyms),
-      "antonyms": list(antonyms)
+      "antonyms": list(antonyms),
+      "hyponyms": list(hyponyms),
+      "meronyms": list(meronyms)
     }
   except Exception as e:
-    print(f"Lỗi trong get_word_relations: {str(e)}")
-    raise Exception(f"Lỗi khi lấy đồng nghĩa và trái nghĩa: {str(e)}")
-
-@anvil.server.callable
-def get_hyponyms(vocab_input):
-  """Hàm lấy danh sách các từ nghĩa hẹp (hyponyms) của từ"""
-  if not vocab_input or not vocab_input.strip():
-    raise ValueError("Từ nhập vào không hợp lệ")
-
-  try:
-    hyponyms = set()
-    synsets = wn.synsets(vocab_input.strip())
-    if not synsets:
-      print(f"Không tìm thấy synsets cho từ '{vocab_input}'")
-      return []
-
-    for synset in synsets:
-      for hyponym in synset.hyponyms():
-        hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
-
-    print(f"Danh sách hyponyms: {list(hyponyms)}")
-    return list(hyponyms)
-  except Exception as e:
-    print(f"Lỗi trong get_hyponyms: {str(e)}")
-    raise Exception(f"Lỗi khi lấy hyponyms: {str(e)}")
-
-@anvil.server.callable
-def get_meronyms(vocab_input):
-  """Hàm lấy danh sách các từ biểu thị quan hệ bộ phận-toàn phần (meronyms)"""
-  if not vocab_input or not vocab_input.strip():
-    raise ValueError("Từ nhập vào không hợp lệ")
-
-  try:
-    meronyms = set()
-    synsets = wn.synsets(vocab_input.strip())
-    if not synsets:
-      print(f"Không tìm thấy synsets cho từ '{vocab_input}'")
-      return []
-
-    for synset in synsets:
-      for meronym in synset.part_meronyms():
-        meronyms.update(lemma.name() for lemma in meronym.lemmas())
-      for meronym in synset.substance_meronyms():
-        meronyms.update(lemma.name() for lemma in meronym.lemmas())
-
-    print(f"Danh sách meronyms: {list(meronyms)}")
-    return list(meronyms)
-  except Exception as e:
-    print(f"Lỗi trong get_meronyms: {str(e)}")
-    raise Exception(f"Lỗi khi lấy meronyms: {str(e)}")
+    print(f"Lỗi trong get_all_word_relations: {str(e)}")
+    raise Exception(f"Lỗi khi lấy mối quan hệ từ vựng: {str(e)}")
 
 @anvil.server.callable
 def get_tokens(text):
@@ -223,7 +186,7 @@ def get_word_info(vocab_input):
       result.append(f"Số câu ví dụ: {len(examples)}")
       if examples:
         temp = "Câu ví dụ:\n"
-        for e in examples[:3]:  # Giới hạn tối đa 3 ví dụ mỗi synset
+        for e in examples[:3]:
           temp += f"- {e}\n"
         result.append(temp)
       else:
@@ -235,7 +198,7 @@ def get_word_info(vocab_input):
         hypernyms.update(lemma.name() for lemma in hypernym.lemmas())
       if hypernyms:
         temp = "Từ nghĩa rộng (Hypernyms): "
-        temp += ", ".join(list(hypernyms)[:5])  # Giới hạn tối đa 5 từ
+        temp += ", ".join(list(hypernyms)[:5])
         result.append(temp)
       else:
         result.append("Không có từ nghĩa rộng")
@@ -254,7 +217,7 @@ def get_word_info(vocab_input):
       else:
         result.append("Không có từ liên quan")
 
-      result.append("")  # Dòng trống để phân tách các nghĩa
+      result.append("")
 
     return "\n".join(result)
   except Exception as e:
@@ -288,19 +251,16 @@ def get_word_of_the_day():
       definition = synset.definition()
       result.append(f"Định nghĩa: {definition}")
 
-      # Cung cấp giải thích thêm cho định nghĩa
       if definition == "terminate" and pos == "v":
         result.append("Giải thích: Nghĩa là 'chấm dứt' hoặc 'kết thúc', thường dùng để chỉ việc dừng lại một hành động hoặc trạng thái, ví dụ: chấm dứt hợp đồng (break a contract).")
 
       examples = synset.examples()
       if examples:
         result.append("Câu ví dụ:")
-        # Lọc ví dụ phù hợp hơn
-        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]  # Loại bỏ ví dụ gây nhầm lẫn
+        filtered_examples = [ex for ex in examples if "interrupt" not in ex.lower()]
         if filtered_examples:
           result.append(f"- {filtered_examples[0]}")
         else:
-          # Thêm ví dụ tự tạo nếu không có ví dụ phù hợp
           if definition == "terminate" and pos == "v":
             result.append("- They decided to break the agreement.")
           else:
@@ -317,6 +277,110 @@ def get_word_of_the_day():
     return "\n".join(result)
   except Exception as e:
     raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")
+
+@anvil.server.callable
+def save_word_data(word, relations, detailed_info):
+  """Hàm lưu từ, các mối quan hệ từ vựng và nghĩa chi tiết vào bảng vocab"""
+  try:
+    current_user = anvil.users.get_user()
+    if not current_user:
+      print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
+      return
+
+    # Kiểm tra xem từ đã có trong bảng chưa
+    existing_row = app_tables.vocab.get(Vocab=word, User=current_user)
+    if existing_row:
+      # Cập nhật bản ghi hiện có
+      existing_row.update(
+        Synonyms=json.dumps(relations["synonyms"]),
+        Antonyms=json.dumps(relations["antonyms"]),
+        Hyponyms=json.dumps(relations["hyponyms"]),
+        Meronyms=json.dumps(relations["meronyms"]),
+        Means=detailed_info,
+        DetailedInfo=detailed_info
+      )
+    else:
+      # Thêm bản ghi mới
+      app_tables.vocab.add_row(
+        Vocab=word,
+        Synonyms=json.dumps(relations["synonyms"]),
+        Antonyms=json.dumps(relations["antonyms"]),
+        Hyponyms=json.dumps(relations["hyponyms"]),
+        Meronyms=json.dumps(relations["meronyms"]),
+        Means=detailed_info,
+        DetailedInfo=detailed_info,
+        User=current_user
+      )
+    print(f"Đã lưu từ '{word}' vào cơ sở dữ liệu.")
+  except Exception as e:
+    print(f"Lỗi khi lưu từ '{word}' vào cơ sở dữ liệu: {str(e)}")
+
+@anvil.server.callable
+def get_word_data(word):
+  """Hàm lấy dữ liệu từ vựng từ cơ sở dữ liệu"""
+  try:
+    current_user = anvil.users.get_user()
+    if not current_user:
+      return None
+
+    row = app_tables.vocab.get(Vocab=word, User=current_user)
+    if row:
+      return {
+        "relations": {
+          "synonyms": json.loads(row['Synonyms']) if row['Synonyms'] else [],
+          "antonyms": json.loads(row['Antonyms']) if row['Antonyms'] else [],
+          "hyponyms": json.loads(row['Hyponyms']) if row['Hyponyms'] else [],
+          "meronyms": json.loads(row['Meronyms']) if row['Meronyms'] else []
+        },
+        "detailed_info": row['DetailedInfo']
+      }
+    return None
+  except Exception as e:
+    print(f"Lỗi khi lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}': {str(e)}")
+    return None
+
+@anvil.server.callable
+def save_detailed_info(word, detailed_info):
+  """Hàm lưu nghĩa chi tiết của từ vào cơ sở dữ liệu"""
+  try:
+    current_user = anvil.users.get_user()
+    if not current_user:
+      print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
+      return
+
+    row = app_tables.vocab.get(Vocab=word, User=current_user)
+    if row:
+      row.update(DetailedInfo=detailed_info, Means=detailed_info)
+    else:
+      app_tables.vocab.add_row(
+        Vocab=word,
+        Synonyms=json.dumps([]),
+        Antonyms=json.dumps([]),
+        Hyponyms=json.dumps([]),
+        Meronyms=json.dumps([]),
+        Means=detailed_info,
+        DetailedInfo=detailed_info,
+        User=current_user
+      )
+    print(f"Đã lưu nghĩa chi tiết cho từ '{word}' vào cơ sở dữ liệu.")
+  except Exception as e:
+    print(f"Lỗi khi lưu nghĩa chi tiết cho từ '{word}': {str(e)}")
+
+@anvil.server.callable
+def get_detailed_info(word):
+  """Hàm lấy nghĩa chi tiết của từ từ cơ sở dữ liệu"""
+  try:
+    current_user = anvil.users.get_user()
+    if not current_user:
+      return None
+
+    row = app_tables.vocab.get(Vocab=word, User=current_user)
+    if row and row['DetailedInfo']:
+      return row['DetailedInfo']
+    return None
+  except Exception as e:
+    print(f"Lỗi khi lấy nghĩa chi tiết từ cơ sở dữ liệu cho từ '{word}': {str(e)}")
+    return None
 
 @anvil.server.callable
 def add_vocab(new_vocab_data):

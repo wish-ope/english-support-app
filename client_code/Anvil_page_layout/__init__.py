@@ -13,12 +13,15 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     # Set Form properties and Data Bindings.
 
     self.init_components(**properties)
+    
     self.curr_user = anvil.users.get_user()
 
     if not self.curr_user:
       self.hide_user_bth() 
     else:
+      # Hiển thị nút bấm liên quan tới người dùng
       self.show_user_bth()
+      # Update người dùng 
       self.update_user()
 
 
@@ -33,8 +36,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
       else:
         # Nếu không có avatar, sử dụng hình ảnh mặc định
         self.avatar.source = "_/theme/picture/avatar.jpg"
-        # Nếu có, cập nhật avatar cho người dùng
-        
+      # Cập nhật tên người dùng
       self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
 
   

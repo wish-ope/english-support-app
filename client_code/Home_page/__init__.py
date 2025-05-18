@@ -14,6 +14,7 @@ class Home_page(Home_pageTemplate):
     self.init_components(**properties)
     # If user is logged in, display the add button
     self.curr_user = anvil.users.get_user()
+    # Check người dùng đã nhập thông tin chưa
     self.check_user_info()
  
     if self.curr_user == None:
@@ -67,7 +68,9 @@ class Home_page(Home_pageTemplate):
 
   def check_user_info(self):
     curr_user = anvil.users.get_user()
+    # Kiểm tra người dùng đã nhập thông tin chưa
     if curr_user and (not curr_user['first_name'] or not curr_user['last_name']):
+      # Biến tạm lưu thông tin người dùng
       self.new_user = {}
       self.save_clicked = alert(
         content = User_form(item = self.new_user),

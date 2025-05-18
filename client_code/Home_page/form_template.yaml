@@ -35,7 +35,7 @@ components_by_slot:
         role: outlined-button
         spacing:
           margin: [null, 36, null, 0]
-          padding: [null, 20, 0, null]
+          padding: [0, 20, 0, null]
         text: Thêm từ
       type: Button
     layout_properties: {}
@@ -46,7 +46,7 @@ components_by_slot:
     - components:
       - layout_properties: {grid_position: 'ZOXDGN,HKLZBC'}
         name: category_dropdown
-        properties: {background: 'theme:Dark Overlay 1', role: null}
+        properties: {background: 'theme:Dark Overlay 1', role: outlined}
         type: DropDown
       layout_properties: {grid_position: 'YMLHNL,EYMGGX'}
       name: column_panel_4
@@ -88,7 +88,7 @@ components_by_slot:
               margin: [0, null, null, null]
             text: Chọn một từ để xem chi tiết.
           type: Label
-        - layout_properties: {grid_position: 'TMNSIJ,RIMRTL'}
+        - layout_properties: {grid_position: 'OADALH,XTMYSE'}
           name: word_image
           properties: {}
           type: Image

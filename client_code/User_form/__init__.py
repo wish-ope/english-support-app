@@ -28,8 +28,8 @@ class User_form(User_formTemplate):
     last = self.lastName_input.text
     phone = self.phone_input.text
 
-    # if first and last:
-    anvil.server.call('update_user', avatar, first, last, phone)d
+    # if first and last
+    anvil.server.call('update_user', avatar, first, last, phone)
     self.raise_event('x-close-alert', value=True)
 
 

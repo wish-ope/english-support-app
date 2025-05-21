@@ -2,6 +2,9 @@
  This CSS implements the Material Design 3 look and feel for Anvil apps.
  **/
 /* avatar image*/
+.anvil-role-outlined{
+  box-shadow: 
+}
 .anvil-role-avatar-image{
   width: 100px;
 }
@@ -16,7 +19,8 @@
   border-radius: 15px;
 }
 .anvil-role-box-shadow{
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+  /* box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px; */
+  box-shadow: 10px 10px 5px 10px black;
 }
 /* hover button  */
 .anvil-role-hover-button:hover{

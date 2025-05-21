@@ -333,7 +333,7 @@ roles:
   name: input-error
 - components: [GridPanel]
   name: border-radius
-- components: [GridPanel]
+- components: [GridPanel, TextBox]
   name: box-shadow
 - components: [Label, ColumnPanel]
   name: scrollable-panel

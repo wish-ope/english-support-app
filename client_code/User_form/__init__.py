@@ -14,7 +14,12 @@ class User_form(User_formTemplate):
     self.layout = layout
     self.selected_avatar = None
     current_user = anvil.users.get_user()
+    
     self.avatar_image.source = current_user['user_avatar']
+    self.firstName_input.text = current_user['first_name']
+    self.lastName_input.text = current_user['last_name']
+    self.phone_input.text = current_user['phone']
+    
     if current_user and not current_user['first_name'] and not current_user['last_name']:
       self.cancel_btn.visible = False
     else:

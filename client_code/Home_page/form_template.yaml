@@ -75,11 +75,6 @@ components_by_slot:
           padding: [null, null, 265, null]
       type: ColumnPanel
     - components:
-      - event_bindings: {click: wod_btn_click}
-        layout_properties: {grid_position: 'WSESFR,MVHIIL'}
-        name: wod_btn
-        properties: {text: Word Of Day}
-        type: Button
       - layout_properties: {grid_position: 'FSKLVA,EPHRDW'}
         name: word_of_day_content
         properties: {role: scrollable-panel}

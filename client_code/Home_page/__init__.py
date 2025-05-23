@@ -69,11 +69,10 @@ class Home_page(Home_pageTemplate):
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
 
   def _init_word_of_day_(self):
-    if self.curr_user:
-      self.outlined_card_6.visible = True
-      self.word_of_day_content.visible = False
-    else:
-      self.outlined_card_6.visible = False
+    try:
+      self.word_of_day_content.text = anvil.server.call('get_word_of_the_day')
+    except Exception as e:
+      self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
       
   def clear_all(self):
     """Xóa nội dung panel kết quả"""
@@ -272,15 +271,6 @@ class Home_page(Home_pageTemplate):
       if self.save_clicked:
         open_form('Home_page')
 
-  def wod_btn_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    self.wod_btn.visible = False
-    self.word_of_day_content.visible = True
-    try:
-      word_of_day = anvil.server.call('get_word_of_the_day')
-      self.word_of_day_content.text = word_of_day
-    except Exception as e:
-      self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
 
   def input_text_pressed_enter(self, **event_args):
     """This method is called when the user presses Enter in this text box"""

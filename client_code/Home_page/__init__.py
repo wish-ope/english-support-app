@@ -46,17 +46,18 @@ class Home_page(Home_pageTemplate):
     self.relation_panel.clear()
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
     self.word_image.visible = False
-    self.dropdown_items = [("Đồng nghĩa", "synonyms"), ("Trái nghĩa", "antonyms"), 
-                           ("Hyponyms", "hyponyms"), ("Meronyms", "meronyms")]
-    self.category_dropdown.items = self.dropdown_items
-    self.column_panel_2.visible = False
-  # def _init_dropdown_(self):
+
+  def _init_dropdown_(self):
   #   self.category_dropdown.items = [
   #     ("Đồng nghĩa", "synonyms"),
   #     ("Trái nghĩa", "antonyms"),
   #     ("Hyponyms", "hyponyms"),
   #     ("Meronyms", "meronyms")
   #   ]
+    self.dropdown_items = [("Đồng nghĩa", "synonyms"), ("Trái nghĩa", "antonyms"), 
+                           ("Hyponyms", "hyponyms"), ("Meronyms", "meronyms")]
+    self.category_dropdown.items = self.dropdown_items
+    self.column_panel_2.visible = False
     self.category_dropdown.selected_value = "synonyms"
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
 

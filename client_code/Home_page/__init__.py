@@ -108,13 +108,14 @@ class Home_page(Home_pageTemplate):
         self.analyze_sentence(result["sentence_analysis"])
         self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
         self.clear_relations()
-
-
+      self.column_panel_2.visible = True
     except Exception as e:
       alert(f"Có lỗi xảy ra: {str(e)}")
       print(f"Error in search_btn_click: {str(e)}")
-    self.column_panel_2.visible = True
 
+
+  # hàm search nhiều từ cùng lúc
+  # Như search câu nhưng hiện những từ theo thứ tự của dropdown
   def update_dropdown_options(self):
     """Cập nhật trạng thái của dropdown dựa trên từ nhập vào"""
     if not hasattr(self, 'word_relations'):

@@ -99,8 +99,6 @@ class Home_page(Home_pageTemplate):
         self.analyze_sentence(result["sentence_analysis"])
         self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
         self.clear_relations()
-
-
     except Exception as e:
       alert(f"Lỗi khi xử lý tìm kiếm: {str(e)}")
       # alert(f"Có lỗi xảy ra: {str(e)}")

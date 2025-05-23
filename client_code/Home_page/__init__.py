@@ -90,7 +90,7 @@ class Home_page(Home_pageTemplate):
           antonyms=result["relations"]["antonyms"],
           hyponyms=result["relations"]["hyponyms"],
           meronyms=result["relations"]["meronyms"]
-        )
+        )#cần khai báo trong init chứ không nên khai báo trong function.
         self.update_dropdown_options()
         self.update_relation_panel()
         self.update_word_details(self.current_word)
@@ -213,7 +213,7 @@ class Home_page(Home_pageTemplate):
         detailed_info = anvil.server.call('get_word_info', word)
         anvil.server.call('save_detailed_info', word, detailed_info)
 
-      lines = detailed_info.split('\n')
+      lines = detailed_info.split('\n') # có thể tạo 1 cột riêng để lưu URL ảnh, không cần thiết phải tách ra và join lại
       self.detail_label.text = "\n".join(line for line in lines if not line.startswith('**Ảnh minh họa:**'))
 
       image_url_line = next((line for line in lines if line.startswith('**Ảnh minh họa:**')), None)

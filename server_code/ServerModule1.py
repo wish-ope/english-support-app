@@ -335,7 +335,8 @@ def save_detailed_info(word, detailed_info):
 
     row = app_tables.vocab.get(Vocab=word, User=current_user)
     if row:
-      row.update(DetailedInfo=detailed_info, Means=detailed_info)
+      # row.update(DetailedInfo=detailed_info, Means=detailed_info)
+      return  # Từ đã tồn tại, bỏ qua.
     else:
       app_tables.vocab.add_row(
         Vocab=word,

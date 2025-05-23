@@ -23,9 +23,25 @@ class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     self.init_components(**properties)
     self.word_relations = WordRelations()
+
+    # Kiểm tra người dùng
+    self._init_user()
+
+    # Thiết lập ban đầu
+    self._init_defaults_()
+
+    # Cấu hình dropdown
+    self._init_dropdown_()
+
+    # Hiển thị từ của ngày
+    self._init_word_of_day_()
+
+  def _init_user(self):
     self.curr_user = anvil.users.get_user()
     self.check_user_info()
     self.add_btn.visible = bool(self.curr_user)
+    # self.add_btn.visible = self.curr_user is not None
+  def _init_defaults_(self):
     self.result_panel.clear()
     self.relation_panel.clear()
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
@@ -33,14 +49,23 @@ class Home_page(Home_pageTemplate):
     self.dropdown_items = [("Đồng nghĩa", "synonyms"), ("Trái nghĩa", "antonyms"), 
                            ("Hyponyms", "hyponyms"), ("Meronyms", "meronyms")]
     self.category_dropdown.items = self.dropdown_items
+    self.column_panel_2.visible = False
+  # def _init_dropdown_(self):
+  #   self.category_dropdown.items = [
+  #     ("Đồng nghĩa", "synonyms"),
+  #     ("Trái nghĩa", "antonyms"),
+  #     ("Hyponyms", "hyponyms"),
+  #     ("Meronyms", "meronyms")
+  #   ]
     self.category_dropdown.selected_value = "synonyms"
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
 
+  def _init_word_of_day_(self):
     try:
       self.word_of_day_content.text = anvil.server.call('get_word_of_the_day')
     except Exception as e:
       self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
-
+      
   def clear_all(self):
     self.result_panel.clear()
 
@@ -71,8 +96,13 @@ class Home_page(Home_pageTemplate):
         self.analyze_sentence(result["sentence_analysis"])
         self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
         self.clear_relations()
+
+
     except Exception as e:
       alert(f"Lỗi khi xử lý tìm kiếm: {str(e)}")
+      # alert(f"Có lỗi xảy ra: {str(e)}")
+      # print(f"Error in search_btn_click: {str(e)}")
+    self.column_panel_2.visible = True
 
   def update_dropdown_options(self):
     enabled_items = [(text, value) for text, value in self.dropdown_items 
@@ -205,3 +235,8 @@ class Home_page(Home_pageTemplate):
       )
       if self.save_clicked:
         open_form('Home_page')
+
+
+  def input_text_pressed_enter(self, **event_args):
+    """This method is called when the user presses Enter in this text box"""
+    self.search_btn_click()

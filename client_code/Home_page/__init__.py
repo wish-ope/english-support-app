@@ -41,6 +41,7 @@ class Home_page(Home_pageTemplate):
     self.check_user_info()
     self.add_btn.visible = bool(self.curr_user)
     # self.add_btn.visible = self.curr_user is not None
+    
   def _init_defaults_(self):
     self.result_panel.clear()
     self.relation_panel.clear()
@@ -57,10 +58,11 @@ class Home_page(Home_pageTemplate):
     self.dropdown_items = [("Đồng nghĩa", "synonyms"), ("Trái nghĩa", "antonyms"), 
                            ("Hyponyms", "hyponyms"), ("Meronyms", "meronyms")]
     self.category_dropdown.items = self.dropdown_items
-    self.column_panel_2.visible = False
+
     self.category_dropdown.selected_value = "synonyms"
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
-
+    
+    self.search_result_panel.visible = False 
   def _init_word_of_day_(self):
     try:
       self.word_of_day_content.text = anvil.server.call('get_word_of_the_day')
@@ -103,7 +105,7 @@ class Home_page(Home_pageTemplate):
       alert(f"Lỗi khi xử lý tìm kiếm: {str(e)}")
       # alert(f"Có lỗi xảy ra: {str(e)}")
       # print(f"Error in search_btn_click: {str(e)}")
-    self.column_panel_2.visible = True
+    self.search_result_panel.visible = True #Khi người dùng nhập tìm kiếm thì hiển thị các thành phần
 
   def update_dropdown_options(self):
     enabled_items = [(text, value) for text, value in self.dropdown_items 

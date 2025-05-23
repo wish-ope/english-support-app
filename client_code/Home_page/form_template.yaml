@@ -2,7 +2,8 @@ components_by_slot:
   slot_1:
   - components:
     - components:
-      - layout_properties: {}
+      - event_bindings: {pressed_enter: input_text_pressed_enter}
+        layout_properties: {}
         name: input_text
         properties: {background: 'theme:Dark Overlay 1', enabled: true, placeholder: Enter to search..., role: outlined, text: '', underline: false}
         type: TextBox

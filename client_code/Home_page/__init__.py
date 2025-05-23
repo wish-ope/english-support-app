@@ -37,17 +37,28 @@ class Home_page(Home_pageTemplate):
     self.init_components(**properties)
 
     # Kiểm tra người dùng
+    self._init_user()
+
+    # Thiết lập ban đầu
+    self._init_defaults_()
+
+    # Cấu hình dropdown
+    self._init_dropdown_()
+
+    # Hiển thị từ của ngày
+    self._init_word_of_day_()
+
+  def _init_user(self):
     self.curr_user = anvil.users.get_user()
     self.check_user_info()
     self.add_btn.visible = self.curr_user is not None
-
-    # Thiết lập ban đầu
+  def _init_defaults_(self):
     self.result_panel.clear()
     self.relation_panel.clear()
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
     self.word_image.visible = False
-
-    # Cấu hình dropdown
+    self.column_panel_2.visible = False
+  def _init_dropdown_(self):
     self.category_dropdown.items = [
       ("Đồng nghĩa", "synonyms"),
       ("Trái nghĩa", "antonyms"),
@@ -57,13 +68,13 @@ class Home_page(Home_pageTemplate):
     self.category_dropdown.selected_value = "synonyms"
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
 
-    # Hiển thị từ của ngày
+  def _init_word_of_day_(self):
     if self.curr_user:
       self.outlined_card_6.visible = True
       self.word_of_day_content.visible = False
     else:
       self.outlined_card_6.visible = False
-
+      
   def clear_all(self):
     """Xóa nội dung panel kết quả"""
     self.result_panel.clear()
@@ -99,9 +110,11 @@ class Home_page(Home_pageTemplate):
         self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
         self.clear_relations()
 
+
     except Exception as e:
       alert(f"Có lỗi xảy ra: {str(e)}")
       print(f"Error in search_btn_click: {str(e)}")
+    self.column_panel_2.visible = True
 
   def update_dropdown_options(self):
     """Cập nhật trạng thái của dropdown dựa trên từ nhập vào"""
@@ -268,3 +281,7 @@ class Home_page(Home_pageTemplate):
       self.word_of_day_content.text = word_of_day
     except Exception as e:
       self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
+
+  def input_text_pressed_enter(self, **event_args):
+    """This method is called when the user presses Enter in this text box"""
+    self.search_btn_click()

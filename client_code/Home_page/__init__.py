@@ -108,14 +108,12 @@ class Home_page(Home_pageTemplate):
     if not input_text:
       alert("Vui lòng nhập một từ hoặc câu hợp lệ!")
       return
-    if self.mode == "word":
-      try:
-        result = anvil.server.call('search_by_word_func', input_text)
+
     try:
       # Gọi hàm tổng hợp trên server để xử lý đầu vào
-      result = anvil.server.call('process_input', input_text)
-
-      if result["type"] == "word":
+      result = anvil.server.call('process_input', input_text, self.mode)
+      
+      if self.mode == "word":
         self.current_word = result["word"]
         self.word_relations = WordRelations(
           synonyms=result["relations"]["synonyms"],

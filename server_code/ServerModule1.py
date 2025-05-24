@@ -33,7 +33,7 @@ def get_image_url(word):
     return None
 
 @anvil.server.callable
-def process_input(text):
+def process_input(text, mode):
   """Hàm xử lý đầu vào: phân biệt từ/câu và trả về kết quả tương ứng"""
   if not text or not text.strip():
     raise ValueError("Văn bản nhập vào không hợp lệ")
@@ -41,64 +41,9 @@ def process_input(text):
   try:
     # Tạo doc một lần duy nhất
     doc = nlp(text.strip())
-    tokens = [token.text for token in doc]
-    print(f"Danh sách từ: {tokens}")
 
-    if len(tokens) == 1:
-      # Xử lý từ đơn
-      word = tokens[0]
-      # Kiểm tra cơ sở dữ liệu
-      word_data = get_word_data(word)
-      if word_data:
-        print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
-        return {
-          "type": "word",
-          "word": word,
-          "relations": word_data["relations"],
-          "detailed_info": word_data["detailed_info"]
-        }
-      else:
-        print(f"Không tìm thấy từ '{word}' trong cơ sở dữ liệu, xử lý bằng SpaCy...")
-        # Lấy mối quan hệ từ vựng
-        synonyms = set()
-        antonyms = set()
-        hyponyms = set()
-        meronyms = set()
-
-        for token in doc:
-          synsets = token._.wordnet.synsets()
-          for synset in synsets:
-            for lemma in synset.lemma_names():
-              synonyms.add(lemma)
-            for lemma in synset.lemmas():
-              antonym_list = lemma.antonyms()
-              for antonym in antonym_list:
-                antonyms.add(antonym.name())
-            for hyponym in synset.hyponyms():
-              hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
-            for meronym in synset.part_meronyms():
-              meronyms.update(lemma.name() for lemma in meronym.lemmas())
-            for meronym in synset.substance_meronyms():
-              meronyms.update(lemma.name() for lemma in meronym.lemmas())
-
-        relations = {
-          "synonyms": list(synonyms),
-          "antonyms": list(antonyms),
-          "hyponyms": list(hyponyms),
-          "meronyms": list(meronyms)
-        }
-
-        # Lấy thông tin chi tiết
-        detailed_info = get_word_info(word)
-        # Lưu vào cơ sở dữ liệu
-        save_word_data(word, relations, detailed_info)
-
-        return {
-          "type": "word",
-          "word": word,
-          "relations": relations,
-          "detailed_info": detailed_info
-        }
+    if mode == "word":
+      search_by_word_func(doc)
     else:
       # Xử lý câu
       result = []
@@ -119,9 +64,9 @@ def process_input(text):
     print(f"Lỗi trong process_input: {str(e)}")
     raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
 
-def search_by_word_func(text):
+def search_by_word_func(doc):
     # Xử lý từ đơn
-    word = 
+    word = doc
     # Kiểm tra cơ sở dữ liệu
     word_data = get_word_data(word)
     if word_data:
@@ -174,7 +119,7 @@ def search_by_word_func(text):
         "relations": relations,
         "detailed_info": detailed_info
       }
-def search_by_sentence_func(self):
+# def search_by_sentence_func(self):
 def get_word_role(pos):
   """Hàm ánh xạ POS tag của SpaCy thành vai trò ngữ pháp dễ hiểu"""
   pos_roles = {

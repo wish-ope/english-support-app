@@ -40,26 +40,28 @@ def process_input(text, mode):
 
   try:
     # Tạo doc một lần duy nhất
-    doc = nlp(text.strip())
+    doc = nlp(text)
+    # tokens = [token.text for token in doc]
+    # print(f"Danh sách từ: {tokens}")
 
     if mode == "word":
       search_by_word_func(doc)
-    else:
-      # Xử lý câu
-      result = []
-      for token in doc:
-        word_info = {
-          "word": token.text,
-          "pos": token.pos_,
-          "role": get_word_role(token.pos_)
-        }
-        result.append(word_info)
+    # else:
+    #   # Xử lý câu
+    #   result = []
+    #   for token in doc:
+    #     word_info = {
+    #       "word": token.text,
+    #       "pos": token.pos_,
+    #       "role": get_word_role(token.pos_)
+    #     }
+    #     result.append(word_info)
 
-      print(f"Kết quả phân tích câu: {result}")
-      return {
-        "type": "sentence",
-        "sentence_analysis": result
-      }
+    #   print(f"Kết quả phân tích câu: {result}")
+    #   return {
+    #     "type": "sentence",
+    #     "sentence_analysis": result
+    #   }
   except Exception as e:
     print(f"Lỗi trong process_input: {str(e)}")
     raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
@@ -85,8 +87,8 @@ def search_by_word_func(doc):
       hyponyms = set()
       meronyms = set()
 
-      for token in doc:
-        synsets = token._.wordnet.synsets()
+      for word in doc:
+        synsets = word._.wordnet.synsets()
         for synset in synsets:
           for lemma in synset.lemma_names():
             synonyms.add(lemma)

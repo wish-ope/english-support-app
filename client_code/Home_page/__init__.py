@@ -41,6 +41,9 @@ class Home_page(Home_pageTemplate):
 
     # Thiết lập ban đầu
     self._init_defaults_()
+    self.mode = "word"
+    self.update_btn_style()
+
 
     # Cấu hình dropdown
     self._init_dropdown_()
@@ -73,7 +76,24 @@ class Home_page(Home_pageTemplate):
       self.word_of_day_content.text = anvil.server.call('get_word_of_the_day')
     except Exception as e:
       self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
-      
+
+  def update_btn_style(self):
+    if self.mode == "word":
+      self.input_text.placeholder = "Search by word..."
+      self.word_btn.background = "#6750A4"
+      self.word_btn.foreground = "#FFFFFF"
+      self.sentence_btn.background = "#FFFFFF"
+      self.sentence_btn.foreground = "#6750A4"
+    else:
+      self.input_text.placeholder = "Search by sentence..."
+      self.word_btn.background = "#FFFFFF"
+      self.word_btn.foreground = "#6750A4" 
+      self.sentence_btn.background = "#6750A4"
+      self.sentence_btn.foreground = "#FFFFFF"
+
+  
+    
+    
   def clear_all(self):
     """Xóa nội dung panel kết quả"""
     self.result_panel.clear()
@@ -88,7 +108,9 @@ class Home_page(Home_pageTemplate):
     if not input_text:
       alert("Vui lòng nhập một từ hoặc câu hợp lệ!")
       return
-
+    if self.mode == "word":
+      try:
+        result = anvil.server.call('search_by_word_func', input_text)
     try:
       # Gọi hàm tổng hợp trên server để xử lý đầu vào
       result = anvil.server.call('process_input', input_text)
@@ -276,3 +298,14 @@ class Home_page(Home_pageTemplate):
   def input_text_pressed_enter(self, **event_args):
     """This method is called when the user presses Enter in this text box"""
     self.search_btn_click()
+
+  def word_btn_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.mode = "word"
+    self.update_btn_style()
+
+  def sentence_btn_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.mode = "sentence"
+    self.update_btn_style()
+  

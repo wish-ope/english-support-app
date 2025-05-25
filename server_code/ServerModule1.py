@@ -41,8 +41,8 @@ def process_input(text, mode):
   try:
     # Tạo doc một lần duy nhất
     doc = nlp(text)
-    # tokens = [token.text for token in doc]
-    # print(f"Danh sách từ: {tokens}")
+    tokens = [token.text for token in doc]
+    print(f"Danh sách từ: {tokens}")
 
     if mode == "word":
       search_by_word_func(doc)
@@ -66,16 +66,16 @@ def process_input(text, mode):
     print(f"Lỗi trong process_input: {str(e)}")
     raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
 
-def search_by_word_func(text):
+def search_by_word_func(doc):
     # Xử lý từ đơn
-    doc = nlp(text)
+    word = doc
     # Kiểm tra cơ sở dữ liệu
-    word_data = get_word_data(text)
+    word_data = get_word_data(word)
     if word_data:
-      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{text}'")
+      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
       return {
         "type": "word",
-        "word": text,
+        "word": word,
         "relations": word_data["relations"],
         "detailed_info": word_data["detailed_info"]
       }

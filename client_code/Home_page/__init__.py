@@ -114,7 +114,7 @@ class Home_page(Home_pageTemplate):
       result = anvil.server.call('process_input', input_text, self.mode)
       
       if self.mode == "word":
-        self.current_word = result["word"]
+        self.current_word = self.mode
         self.word_relations = WordRelations(
           synonyms=result["relations"]["synonyms"],
           antonyms=result["relations"]["antonyms"],

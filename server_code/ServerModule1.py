@@ -40,35 +40,38 @@ def process_input(text, mode):
 
   try:
     # Tạo doc một lần duy nhất
-    doc = nlp(text)
+    doc = nlp(text.strip())
     tokens = [token.text for token in doc]
     print(f"Danh sách từ: {tokens}")
 
     if mode == "word":
-      search_by_word_func(doc)
-    # else:
-    #   # Xử lý câu
-    #   result = []
-    #   for token in doc:
-    #     word_info = {
-    #       "word": token.text,
-    #       "pos": token.pos_,
-    #       "role": get_word_role(token.pos_)
-    #     }
-    #     result.append(word_info)
+      result = search_by_word_func(doc)
+    else:
+      # Xử lý câu
+      result = []
+      for token in doc:
+        word_info = {
+          "word": token.text,
+          "pos": token.pos_,
+          "role": get_word_role(token.pos_)
+        }
+        result.append(word_info)
 
-    #   print(f"Kết quả phân tích câu: {result}")
-    #   return {
-    #     "type": "sentence",
-    #     "sentence_analysis": result
-    #   }
+      print(f"Kết quả phân tích câu: {result}")
+      return {
+        "type": "sentence",
+        "sentence_analysis": result
+      }
   except Exception as e:
     print(f"Lỗi trong process_input: {str(e)}")
     raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
 
 def search_by_word_func(doc):
     # Xử lý từ đơn
-    word = doc
+  try:
+    token = doc[0]
+    word = token.text
+    print(word)
     # Kiểm tra cơ sở dữ liệu
     word_data = get_word_data(word)
     if word_data:
@@ -87,8 +90,8 @@ def search_by_word_func(doc):
       hyponyms = set()
       meronyms = set()
 
-      for word in doc:
-        synsets = word._.wordnet.synsets()
+      for token in doc:
+        synsets = token._.wordnet.synsets()
         for synset in synsets:
           for lemma in synset.lemma_names():
             synonyms.add(lemma)
@@ -121,6 +124,9 @@ def search_by_word_func(doc):
         "relations": relations,
         "detailed_info": detailed_info
       }
+  except Exception as e:
+    print(f"[ERROR] search_by_word: {str(e)}")
+    return None
 # def search_by_sentence_func(self):
 def get_word_role(pos):
   """Hàm ánh xạ POS tag của SpaCy thành vai trò ngữ pháp dễ hiểu"""

@@ -66,16 +66,16 @@ def process_input(text, mode):
     print(f"Lỗi trong process_input: {str(e)}")
     raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
 
-def search_by_word_func(doc):
+def search_by_word_func(text):
     # Xử lý từ đơn
-    word = doc
+    doc = nlp(text)
     # Kiểm tra cơ sở dữ liệu
-    word_data = get_word_data(word)
+    word_data = get_word_data(text)
     if word_data:
-      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
+      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{text}'")
       return {
         "type": "word",
-        "word": word,
+        "word": text,
         "relations": word_data["relations"],
         "detailed_info": word_data["detailed_info"]
       }

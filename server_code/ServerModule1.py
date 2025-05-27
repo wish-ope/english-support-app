@@ -27,37 +27,69 @@ def get_image_url(word):
     return "Không tìm thấy ảnh"
 
 @anvil.server.callable
-def process_input(text):
-  if not text or not text.strip():
+def process_input(input_data):
+  if not input_data:
     raise ValueError("Văn bản nhập vào không hợp lệ")
-  doc = nlp(text.strip())
-  tokens = [token.text for token in doc]
 
-  if len(tokens) == 1:
-    word = tokens[0]
-    word_data = get_word_data(word)
-    if word_data:
-      return {"type": "word", "word": word, "relations": word_data["relations"]}
+  if isinstance(input_data, list):
+    words = [w.strip() for w in input_data if w.strip()]
+    if not words:
+      raise ValueError("Danh sách từ không hợp lệ")
 
-    synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
-    for synset in doc[0]._.wordnet.synsets():
-      synonyms.update(synset.lemma_names())
-      antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
-      hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
-      meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+    relations_dict = {}
+    for word in words:
+      word_data = get_word_data(word)
+      if word_data:
+        relations_dict[word] = word_data["relations"]
+        continue
 
-    relations = {
-      "synonyms": list(synonyms),
-      "antonyms": list(antonyms),
-      "hyponyms": list(hyponyms),
-      "meronyms": list(meronyms)
-    }
-    detailed_info = get_word_info(word)
-    save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
-    return {"type": "word", "word": word, "relations": relations}
+      doc = nlp(word)
+      synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
+      for synset in doc[0]._.wordnet.synsets():
+        synonyms.update(synset.lemma_names())
+        antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+        hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+        meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+
+      relations = {
+        "synonyms": list(synonyms),
+        "antonyms": list(antonyms),
+        "hyponyms": list(hyponyms),
+        "meronyms": list(meronyms)
+      }
+      relations_dict[word] = relations
+      detailed_info = get_word_info(word)
+      save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
+
+    return {"type": "word", "words": words, "relations": relations_dict}
   else:
-    result = [{"word": token.text, "pos": token.pos_, "role": get_word_role(token.pos_)} for token in doc]
-    return {"type": "sentence", "sentence_analysis": result}
+    doc = nlp(input_data.strip())
+    tokens = [token.text for token in doc]
+    if len(tokens) == 1:
+      word = tokens[0]
+      word_data = get_word_data(word)
+      if word_data:
+        return {"type": "word", "word": word, "relations": word_data["relations"]}
+
+      synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
+      for synset in doc[0]._.wordnet.synsets():
+        synonyms.update(synset.lemma_names())
+        antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+        hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+        meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+
+      relations = {
+        "synonyms": list(synonyms),
+        "antonyms": list(antonyms),
+        "hyponyms": list(hyponyms),
+        "meronyms": list(meronyms)
+      }
+      detailed_info = get_word_info(word)
+      save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
+      return {"type": "word", "word": word, "relations": relations}
+    else:
+      result = [{"word": token.text, "pos": token.pos_, "role": get_word_role(token.pos_)} for token in doc]
+      return {"type": "sentence", "sentence_analysis": result}
 
 def get_word_role(pos):
   pos_roles = {

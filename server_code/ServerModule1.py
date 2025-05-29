@@ -14,7 +14,7 @@ try:
   import en_core_web_sm
   nltk.download('wordnet', quiet=True)
   nlp = en_core_web_sm.load()
-  nlp.add_pipe("spacy_wordnet", after='tagger')
+  nlp.add_pipe("wordnet", after="tagger")
 except Exception as e:
   raise Exception(f"Không thể tải mô hình ngôn ngữ hoặc WordNet: {str(e)}")
 
@@ -27,11 +27,14 @@ def get_image_url(word):
     return "Không tìm thấy ảnh"
 
 @anvil.server.callable
-def process_input(input_data):
+def process_input(input_data, is_word=True):
   if not input_data:
     raise ValueError("Văn bản nhập vào không hợp lệ")
 
-  if isinstance(input_data, list):
+  if is_word:
+    # Xử lý từ hoặc cụm từ
+    if not isinstance(input_data, list):
+      input_data = [input_data.strip()]
     words = [w.strip() for w in input_data if w.strip()]
     if not words:
       raise ValueError("Danh sách từ không hợp lệ")
@@ -44,12 +47,25 @@ def process_input(input_data):
         continue
 
       doc = nlp(word)
+      # Phát hiện cụm danh từ
+      noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+      is_phrase = len(noun_phrases) == 1 and noun_phrases[0] == word
       synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
-      for synset in doc[0]._.wordnet.synsets():
-        synonyms.update(synset.lemma_names())
-        antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
-        hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
-        meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+      if is_phrase:
+        # Lấy synset cho head noun (từ cuối)
+        head_noun = doc[-1].text
+        head_doc = nlp(head_noun)
+        for synset in head_doc[0]._.wordnet.synsets():
+          synonyms.update(synset.lemma_names())
+          antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+          hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+          meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+      else:
+        for synset in doc[0]._.wordnet.synsets():
+          synonyms.update(synset.lemma_names())
+          antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+          hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+          meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
 
       relations = {
         "synonyms": list(synonyms),
@@ -60,36 +76,15 @@ def process_input(input_data):
       relations_dict[word] = relations
       detailed_info = get_word_info(word)
       save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
-
     return {"type": "word", "words": words, "relations": relations_dict}
   else:
+    # Xử lý câu
     doc = nlp(input_data.strip())
     tokens = [token.text for token in doc]
-    if len(tokens) == 1:
-      word = tokens[0]
-      word_data = get_word_data(word)
-      if word_data:
-        return {"type": "word", "word": word, "relations": word_data["relations"]}
-
-      synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
-      for synset in doc[0]._.wordnet.synsets():
-        synonyms.update(synset.lemma_names())
-        antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
-        hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
-        meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
-
-      relations = {
-        "synonyms": list(synonyms),
-        "antonyms": list(antonyms),
-        "hyponyms": list(hyponyms),
-        "meronyms": list(meronyms)
-      }
-      detailed_info = get_word_info(word)
-      save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
-      return {"type": "word", "word": word, "relations": relations}
-    else:
-      result = [{"word": token.text, "pos": token.pos_, "role": get_word_role(token.pos_)} for token in doc]
-      return {"type": "sentence", "sentence_analysis": result}
+    if len(tokens) < 2:
+      raise ValueError("Vui lòng nhập một câu hoàn chỉnh!")
+    result = [{"word": token.text, "pos": token.pos_, "role": get_word_role(token.pos_)} for token in doc]
+    return {"type": "sentence", "sentence_analysis": result}
 
 def get_word_role(pos):
   pos_roles = {
@@ -106,12 +101,26 @@ def get_word_info(vocab_input):
     raise ValueError("Từ nhập vào không hợp lệ")
   try:
     doc = nlp(vocab_input.strip())
-    synsets = doc[0]._.wordnet.synsets()
+    # Phát hiện cụm danh từ
+    noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+    is_phrase = len(noun_phrases) == 1 and noun_phrases[0] == vocab_input
+    synsets = doc[0]._.wordnet.synsets() if not is_phrase else []
+    if is_phrase and not synsets:
+      # Thử lấy synset cho head noun
+      head_noun = doc[-1].text
+      head_doc = nlp(head_noun)
+      synsets = head_doc[0]._.wordnet.synsets()
+
     if not synsets:
-      return {"detailed_info": f"Không tìm thấy thông tin cho từ '{vocab_input}'.", "image_url": "Không tìm thấy ảnh"}
+      return {
+        "detailed_info": f"Không tìm thấy thông tin chi tiết cho '{vocab_input}'.",
+        "image_url": get_image_url(vocab_input)
+      }
 
     image_url = get_image_url(vocab_input)
     result = []
+    if is_phrase:
+      result.append(f"**Cụm danh từ: {vocab_input}**")
     for idx, synset in enumerate(synsets, 1):
       result.append(f"**Nghĩa {idx}:**")
       pos_desc = {'n': 'Danh từ', 'v': 'Động từ', 'a': 'Tính từ', 'r': 'Trạng từ', 's': 'Tính từ vệ tinh'}.get(synset.pos(), 'Không xác định')
@@ -135,7 +144,6 @@ def get_word_of_the_day():
     current_user = anvil.users.get_user()
     if not current_user:
       return "Không có người dùng đăng nhập."
-
     vocab_rows = app_tables.vocab.search(User=current_user)
     if not vocab_rows:
       return "Không có từ nào trong cơ sở dữ liệu."

@@ -34,6 +34,7 @@ components_by_slot:
       properties:
         enabled: true
         font_size: null
+        icon: fa:plus
         role: elevated-button
         spacing:
           margin: [null, 36, null, 0]

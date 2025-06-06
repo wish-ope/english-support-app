@@ -108,7 +108,7 @@ class Home_page(Home_pageTemplate):
     """Xử lý khi nút tìm kiếm được nhấn"""
     if self.mode:
       input_text = self.input_text.text.strip()
-      if not input_text:
+      if not input_text or len(input_text.strip().split()) > 2:
         alert("Vui lòng nhập một từ hoặc cụm từ hợp lệ!")
         return
   
@@ -139,7 +139,7 @@ class Home_page(Home_pageTemplate):
         alert(f"Lỗi khi xử lý: {str(e)}")
     else:
       input_text = self.input_text.text.strip()
-      if not input_text:
+      if not input_text or len(input_text.strip().split()) < 2:
         alert("Vui lòng nhập một câu hợp lệ!")
         return
       

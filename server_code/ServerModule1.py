@@ -209,38 +209,35 @@ def get_word_of_the_day():
     raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")
 
 @anvil.server.callable
-def save_word_data(word, relations, detailed_info):
-  """Hàm lưu từ, các mối quan hệ từ vựng và nghĩa chi tiết vào bảng vocab"""
+def save_word_data(word, relations, detailed_info, image_url):
   try:
     current_user = anvil.users.get_user()
     if not current_user:
-      print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
       return
-
-    existing_row = app_tables.vocab.get(Vocab=word, User=current_user)
-    if existing_row:
-      existing_row.update(
-        Synonyms=json.dumps(relations["synonyms"]),
-        Antonyms=json.dumps(relations["antonyms"]),
-        Hyponyms=json.dumps(relations["hyponyms"]),
-        Meronyms=json.dumps(relations["meronyms"]),
-        Means=detailed_info,
-        DetailedInfo=detailed_info
-      )
-    else:
-      app_tables.vocab.add_row(
-        Vocab=word,
-        Synonyms=json.dumps(relations["synonyms"]),
-        Antonyms=json.dumps(relations["antonyms"]),
-        Hyponyms=json.dumps(relations["hyponyms"]),
-        Meronyms=json.dumps(relations["meronyms"]),
-        Means=detailed_info,
-        DetailedInfo=detailed_info,
-        User=current_user
-      )
-    print(f"Đã lưu từ '{word}' vào cơ sở dữ liệu.")
-  except Exception as e:
-    print(f"Lỗi khi lưu từ '{word}' vào cơ sở dữ liệu: {str(e)}")
+    row = app_tables.vocab.get(Vocab=word, User=current_user)
+    if row:
+      if not row['ImageUrl'] or not row['Synonyms']:
+        row.update(
+          Synonyms=json.dumps(relations["synonyms"]),
+          Antonyms=json.dumps(relations["antonyms"]),
+          Hyponyms=json.dumps(relations["hyponyms"]),
+          Meronyms=json.dumps(relations["meronyms"]),
+          DetailedInfo=detailed_info,
+          ImageUrl=image_url
+        )
+      return
+    app_tables.vocab.add_row(
+      Vocab=word,
+      Synonyms=json.dumps(relations["synonyms"]),
+      Antonyms=json.dumps(relations["antonyms"]),
+      Hyponyms=json.dumps(relations["hyponyms"]),
+      Meronyms=json.dumps(relations["meronyms"]),
+      DetailedInfo=detailed_info,
+      ImageUrl=image_url,
+      User=current_user
+    )
+  except:
+    pass
 
 @anvil.server.callable
 def get_word_data(word):

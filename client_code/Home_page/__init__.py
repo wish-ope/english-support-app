@@ -262,7 +262,16 @@ class Home_page(Home_pageTemplate):
         self.clear_relations()
     except Exception as e:
       alert(f"Lỗi khi xử lý từ: {str(e)}")
-
+  def analyze_sentence(self, sentence_analysis):
+    self.clear_all()
+    links = [Link(text=f"{word_info['word']} ({word_info['role']})", role="default",
+                  spacing_above="small", spacing_below="small")
+             for word_info in sentence_analysis]
+    for link in links:
+      link.tag.word = link.text.split(" (")[0]
+      link.add_event_handler('click', self.sentence_word_click)
+    for link in links:
+      self.result_panel.add_component(link)
   def sentence_word_click(self, sender, **event_args):
     word = sender.tag.word
     self.current_word = word

@@ -33,101 +33,66 @@ def get_image_url(word):
     return None
 
 @anvil.server.callable
-def process_input(text, mode):
+def process_input(input_data, mode = True):
   """Hàm xử lý đầu vào: phân biệt từ/câu và trả về kết quả tương ứng"""
-  if not text or not text.strip():
+  if not input_data:
     raise ValueError("Văn bản nhập vào không hợp lệ")
-
-  try:
-    # Tạo doc một lần duy nhất
-    doc = nlp(text.strip())
-    tokens = [token.text for token in doc]
-    print(f"Danh sách từ: {tokens}")
-
-    if mode == "word":
-      result = search_by_word_func(doc)
+  
+    if mode:
+      # Xử lý từ hoặc cụm từ
+      if not isinstance(input_data, list):
+        input_data = [input_data.strip()]
+      words = [w.strip() for w in input_data if w.strip()]
+      if not words:
+        raise ValueError("Danh sách từ không hợp lệ")
+  
+      relations_dict = {}
+      for word in words:
+        word_data = get_word_data(word)
+        if word_data:
+          relations_dict[word] = word_data["relations"]
+          continue
+  
+        doc = nlp(word)
+        # Phát hiện cụm danh từ
+        noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+        is_phrase = len(noun_phrases) == 1 and noun_phrases[0] == word
+        synonyms, antonyms, hyponyms, meronyms = set(), set(), set(), set()
+        if is_phrase:
+          # Lấy synset cho head noun (từ cuối)
+          head_noun = doc[-1].text
+          head_doc = nlp(head_noun)
+          for synset in head_doc[0]._.wordnet.synsets():
+            synonyms.update(synset.lemma_names())
+            antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+            hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+            meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+        else:
+          for synset in doc[0]._.wordnet.synsets():
+            synonyms.update(synset.lemma_names())
+            antonyms.update(lemma.antonyms()[0].name() for lemma in synset.lemmas() if lemma.antonyms())
+            hyponyms.update(lemma.name() for hyponym in synset.hyponyms() for lemma in hyponym.lemmas())
+            meronyms.update(lemma.name() for meronym in synset.part_meronyms() + synset.substance_meronyms() for lemma in meronym.lemmas())
+  
+        relations = {
+          "synonyms": list(synonyms),
+          "antonyms": list(antonyms),
+          "hyponyms": list(hyponyms),
+          "meronyms": list(meronyms)
+        }
+        relations_dict[word] = relations
+        detailed_info = get_word_info(word)
+        save_word_data(word, relations, detailed_info["detailed_info"], detailed_info["image_url"])
+      return {"type": "word", "words": words, "relations": relations_dict}
     else:
       # Xử lý câu
-      result = []
-      for token in doc:
-        word_info = {
-          "word": token.text,
-          "pos": token.pos_,
-          "role": get_word_role(token.pos_)
-        }
-        result.append(word_info)
+      doc = nlp(input_data.strip())
+      tokens = [token.text for token in doc]
+      if len(tokens) < 2:
+        raise ValueError("Vui lòng nhập một câu hoàn chỉnh!")
+      result = [{"word": token.text, "pos": token.pos_, "role": get_word_role(token.pos_)} for token in doc]
+      return {"type": "sentence", "sentence_analysis": result}
 
-      print(f"Kết quả phân tích câu: {result}")
-      return {
-        "type": "sentence",
-        "sentence_analysis": result
-      }
-  except Exception as e:
-    print(f"Lỗi trong process_input: {str(e)}")
-    raise Exception(f"Lỗi khi xử lý đầu vào: {str(e)}")
-
-def search_by_word_func(doc):
-    # Xử lý từ đơn
-  try:
-    token = doc[0]
-    word = token.text
-    print(word)
-    # Kiểm tra cơ sở dữ liệu
-    word_data = get_word_data(word)
-    if word_data:
-      print(f"Lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}'")
-      return {
-        "type": "word",
-        "word": word,
-        "relations": word_data["relations"],
-        "detailed_info": word_data["detailed_info"]
-      }
-    else:
-      print(f"Không tìm thấy từ '{word}' trong cơ sở dữ liệu, xử lý bằng SpaCy...")
-      # Lấy mối quan hệ từ vựng
-      synonyms = set()
-      antonyms = set()
-      hyponyms = set()
-      meronyms = set()
-
-      for token in doc:
-        synsets = token._.wordnet.synsets()
-        for synset in synsets:
-          for lemma in synset.lemma_names():
-            synonyms.add(lemma)
-          for lemma in synset.lemmas():
-            antonym_list = lemma.antonyms()
-            for antonym in antonym_list:
-              antonyms.add(antonym.name())
-          for hyponym in synset.hyponyms():
-            hyponyms.update(lemma.name() for lemma in hyponym.lemmas())
-          for meronym in synset.part_meronyms():
-            meronyms.update(lemma.name() for lemma in meronym.lemmas())
-          for meronym in synset.substance_meronyms():
-            meronyms.update(lemma.name() for lemma in meronym.lemmas())
-
-      relations = {
-        "synonyms": list(synonyms),
-        "antonyms": list(antonyms),
-        "hyponyms": list(hyponyms),
-        "meronyms": list(meronyms)
-      }
-
-      # Lấy thông tin chi tiết
-      detailed_info = get_word_info(word)
-      # Lưu vào cơ sở dữ liệu
-      save_word_data(word, relations, detailed_info)
-
-      return {
-        "type": "word",
-        "word": word,
-        "relations": relations,
-        "detailed_info": detailed_info
-      }
-  except Exception as e:
-    print(f"[ERROR] search_by_word: {str(e)}")
-    return None
-# def search_by_sentence_func(self):
 def get_word_role(pos):
   """Hàm ánh xạ POS tag của SpaCy thành vai trò ngữ pháp dễ hiểu"""
   pos_roles = {

@@ -41,7 +41,7 @@ class Home_page(Home_pageTemplate):
 
     # Thiết lập ban đầu
     self._init_defaults_()
-    self.mode = "word"
+    self.mode = True
     self.update_btn_style()
 
 
@@ -104,34 +104,86 @@ class Home_page(Home_pageTemplate):
 
   def search_btn_click(self, **event_args):
     """Xử lý khi nút tìm kiếm được nhấn"""
-    input_text = self.input_text.text.strip()
-    if not input_text:
-      alert("Vui lòng nhập một từ hoặc câu hợp lệ!")
-      return
-
-    try:
-      # Gọi hàm tổng hợp trên server để xử lý đầu vào
-      result = anvil.server.call('process_input', input_text, self.mode)
-      
-      if self.mode == "word":
-        self.current_word = self.mode
-        self.word_relations = WordRelations(
-          synonyms=result["relations"]["synonyms"],
-          antonyms=result["relations"]["antonyms"],
-          hyponyms=result["relations"]["hyponyms"],
-          meronyms=result["relations"]["meronyms"]
-        )
+    if self.mode:
+      input_text = self.input_text.text.strip()
+      if not input_text:
+        alert("Vui lòng nhập một từ hoặc cụm từ hợp lệ!")
+        return
+  
+      words = [w.strip() for w in input_text.split('/') if w.strip()]
+      if not words:
+        alert("Đầu vào không hợp lệ! Vui lòng nhập ít nhất một từ hoặc cụm từ.")
+        return
+  
+      try:
+        result = anvil.server.call('process_input', words, self.mode)
+        self.input_words = result["words"]
+        self.word_relations_dict.clear()
+        for word, relations in result["relations"].items():
+          self.word_relations_dict[word] = WordRelations(
+            synonyms=relations.get("synonyms", []),
+            antonyms=relations.get("antonyms", []),
+            hyponyms=relations.get("hyponyms", []),
+            meronyms=relations.get("meronyms", [])
+          )
+        self.current_word = self.input_words[0] if self.input_words else None
+        self.update_word_dropdown()
         self.update_dropdown_options()
         self.update_relation_panel()
-        self.update_word_details(self.current_word)
-      else:
-        self.analyze_sentence(result["sentence_analysis"])
-        self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
-        self.clear_relations()
-      self.column_panel_2.visible = True
-    except Exception as e:
-      alert(f"Có lỗi xảy ra: {str(e)}")
-      print(f"Error in search_btn_click: {str(e)}")
+        if self.current_word:
+          self.update_word_details(self.current_word)
+        self.search_result_panel.visible = True
+      except Exception as e:
+        alert(f"Lỗi khi xử lý: {str(e)}")
+    else:
+      input_text = self.input_text.text.strip()
+      if not input_text:
+        alert("Vui lòng nhập một câu hợp lệ!")
+        return
+      
+      try:
+        result = anvil.server.call('process_input', input_text, self.mode)
+        if result["type"] == "sentence":
+          self.input_words = []
+          self.word_relations_dict.clear()
+          self.analyze_sentence(result["sentence_analysis"])
+          self.detail_label.text = "Chọn một từ hoặc cụm từ để xem chi tiết."
+          self.clear_relations()
+          self.word_dropdown.items = []
+          self.search_result_panel.visible = True
+        else:
+          alert("Đầu vào không phải là một câu hợp lệ!")
+      except Exception as e:
+        alert(f"Lỗi khi xử lý: {str(e)}")
+    
+    # input_text = self.input_text.text.strip()
+    # if not input_text:
+    #   alert("Vui lòng nhập một từ hoặc câu hợp lệ!")
+    #   return
+
+    # try:
+    #   # Gọi hàm tổng hợp trên server để xử lý đầu vào
+    #   result = anvil.server.call('process_input', input_text, self.mode)
+      
+    #   if self.mode == "word":
+    #     self.current_word = self.mode
+    #     self.word_relations = WordRelations(
+    #       synonyms=result["relations"]["synonyms"],
+    #       antonyms=result["relations"]["antonyms"],
+    #       hyponyms=result["relations"]["hyponyms"],
+    #       meronyms=result["relations"]["meronyms"]
+    #     )
+    #     self.update_dropdown_options()
+    #     self.update_relation_panel()
+    #     self.update_word_details(self.current_word)
+    #   else:
+    #     self.analyze_sentence(result["sentence_analysis"])
+    #     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
+    #     self.clear_relations()
+    #   self.column_panel_2.visible = True
+    # except Exception as e:
+    #   alert(f"Có lỗi xảy ra: {str(e)}")
+    #   print(f"Error in search_btn_click: {str(e)}")
 
 
   # hàm search nhiều từ cùng lúc
@@ -194,21 +246,6 @@ class Home_page(Home_pageTemplate):
     else:
       self.clear_relations()
       self.relation_panel.add_component(Label(text="Vui lòng tìm kiếm trước!"))
-
-  def analyze_sentence(self, sentence_analysis):
-    """Hiển thị kết quả phân tích câu"""
-    self.clear_all()
-
-    try:
-      for word_info in sentence_analysis:
-        word = word_info["word"]
-        role = word_info["role"]
-        link = Link(text=f"{word} ({role})", role="default", spacing_above="small", spacing_below="small")
-        link.tag.word = word
-        link.add_event_handler('click', self.sentence_word_click)
-        self.result_panel.add_component(link)
-    except Exception as e:
-      self.result_panel.add_component(Label(text=f"Lỗi: {str(e)}"))
 
   def result_word_click(self, sender, **event_args):
     """Xử lý khi nhấp vào một từ trong panel mối quan hệ"""
@@ -299,11 +336,11 @@ class Home_page(Home_pageTemplate):
 
   def word_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.mode = "word"
+    self.mode = True
     self.update_btn_style()
 
   def sentence_btn_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.mode = "sentence"
+    self.mode = False
     self.update_btn_style()
   

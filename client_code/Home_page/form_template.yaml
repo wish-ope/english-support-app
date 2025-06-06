@@ -128,7 +128,8 @@ components_by_slot:
       name: label_5
       properties: {align: center, font_size: 22, text: Phân tích câu}
       type: Label
-    - layout_properties: {grid_position: 'HOXHLW,DDSPHN'}
+    - data_bindings: []
+      layout_properties: {grid_position: 'HOXHLW,DDSPHN'}
       name: result_panel
       properties:
         background: theme:Dark Overlay 1

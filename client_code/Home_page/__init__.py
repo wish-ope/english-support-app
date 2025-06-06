@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..User_form import User_form
+from anvil.js.window import window, document
 
 class WordRelations:
   def __init__(self, synonyms=None, antonyms=None, hyponyms=None, meronyms=None):
@@ -157,37 +158,9 @@ class Home_page(Home_pageTemplate):
           alert("Đầu vào không phải là một câu hợp lệ!")
       except Exception as e:
         alert(f"Lỗi khi xử lý: {str(e)}")
-    
-    # input_text = self.input_text.text.strip()
-    # if not input_text:
-    #   alert("Vui lòng nhập một từ hoặc câu hợp lệ!")
-    #   return
-
-    # try:
-    #   # Gọi hàm tổng hợp trên server để xử lý đầu vào
-    #   result = anvil.server.call('process_input', input_text, self.mode)
-      
-    #   if self.mode == "word":
-    #     self.current_word = self.mode
-    #     self.word_relations = WordRelations(
-    #       synonyms=result["relations"]["synonyms"],
-    #       antonyms=result["relations"]["antonyms"],
-    #       hyponyms=result["relations"]["hyponyms"],
-    #       meronyms=result["relations"]["meronyms"]
-    #     )
-    #     self.update_dropdown_options()
-    #     self.update_relation_panel()
-    #     self.update_word_details(self.current_word)
-    #   else:
-    #     self.analyze_sentence(result["sentence_analysis"])
-    #     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
-    #     self.clear_relations()
-    #   self.column_panel_2.visible = True
-    # except Exception as e:
-    #   alert(f"Có lỗi xảy ra: {str(e)}")
-    #   print(f"Error in search_btn_click: {str(e)}")
-
-
+      self.scroll_to_bottom()
+  def scroll_to_bottom(self):
+    window.scrollTo(0, document.body.scrollHeight)
   # hàm search nhiều từ cùng lúc
   # Như search câu nhưng hiện những từ theo thứ tự của dropdown
   def update_word_dropdown(self):

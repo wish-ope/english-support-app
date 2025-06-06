@@ -78,7 +78,7 @@ class Home_page(Home_pageTemplate):
       self.word_of_day_content.text = f"Lỗi khi lấy từ của ngày: {str(e)}"
 
   def update_btn_style(self):
-    if self.mode == "word":
+    if self.mode:
       self.input_text.placeholder = "Search by word..."
       self.word_btn.background = "#6750A4"
       self.word_btn.foreground = "#FFFFFF"

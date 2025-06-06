@@ -55,7 +55,7 @@ class Home_page(Home_pageTemplate):
     self.relation_panel.clear()
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
     self.word_image.visible = False
-    self.column_panel_2.visible = False
+    self.column_panel_4.visible = False
   def _init_dropdown_(self):
     self.dropdown_items = [
       ("Đồng nghĩa", "synonyms"),

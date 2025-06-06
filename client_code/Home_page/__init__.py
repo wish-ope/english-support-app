@@ -285,3 +285,7 @@ class Home_page(Home_pageTemplate):
 
   def input_text_pressed_enter(self, **event_args):
     self.analyze_word_btn_click()
+
+  def search_btn_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass

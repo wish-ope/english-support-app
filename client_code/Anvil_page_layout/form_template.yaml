@@ -28,7 +28,7 @@ components:
   - event_bindings: {click: about_us_btn_click}
     layout_properties: {grid_position: 'QFWVMS,SUDAJH'}
     name: about_us_btn
-    properties: {icon: 'fa:user-circle', icon_align: right, role: hover-button, text: About Us}
+    properties: {enabled: false, icon: 'fa:user-circle', icon_align: right, role: hover-button, text: About Us, visible: false}
     type: Button
   layout_properties: {slot: left-nav}
   name: column_panel_1

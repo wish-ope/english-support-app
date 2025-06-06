@@ -125,76 +125,44 @@ def get_pos_description(pos_code):
 
 @anvil.server.callable
 def get_word_info(vocab_input):
-  """Hàm lấy thông tin chi tiết của từ với nội dung mở rộng, bao gồm ảnh minh họa"""
   if not vocab_input or not vocab_input.strip():
     raise ValueError("Từ nhập vào không hợp lệ")
-
   try:
     doc = nlp(vocab_input.strip())
-    result = []
+    # Phát hiện cụm danh từ
+    noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+    is_phrase = len(noun_phrases) == 1 and noun_phrases[0] == vocab_input
+    synsets = doc[0]._.wordnet.synsets() if not is_phrase else []
+    if is_phrase and not synsets:
+      # Thử lấy synset cho head noun
+      head_noun = doc[-1].text
+      head_doc = nlp(head_noun)
+      synsets = head_doc[0]._.wordnet.synsets()
 
-    # Lấy tất cả synsets cho từ
-    synsets = doc[0]._.wordnet.synsets()
     if not synsets:
-      return f"Không tìm thấy thông tin cho từ '{vocab_input}'."
+      return {
+        "detailed_info": f"Không tìm thấy thông tin chi tiết cho '{vocab_input}'.",
+        "image_url": get_image_url(vocab_input)
+      }
 
-    # Thêm ảnh minh họa (URL)
     image_url = get_image_url(vocab_input)
-    result.append(f"**Ảnh minh họa:** {image_url if image_url else 'Không tìm thấy ảnh'}")
-    result.append("")
-
-    # Xử lý từng synset
+    result = []
+    if is_phrase:
+      result.append(f"**Cụm danh từ: {vocab_input}**")
     for idx, synset in enumerate(synsets, 1):
       result.append(f"**Nghĩa {idx}:**")
-
-      # POS và mô tả
-      pos = synset.pos()
-      pos_desc = get_pos_description(pos)
+      pos_desc = {'n': 'Danh từ', 'v': 'Động từ', 'a': 'Tính từ', 'r': 'Trạng từ', 's': 'Tính từ vệ tinh'}.get(synset.pos(), 'Không xác định')
       result.append(f"Loại từ (POS): {pos_desc}")
-
-      # Định nghĩa
-      definition = synset.definition()
-      result.append(f"Định nghĩa: {definition}")
-
-      # Ví dụ
+      result.append(f"Định nghĩa: {synset.definition()}")
       examples = synset.examples()
       result.append(f"Số câu ví dụ: {len(examples)}")
       if examples:
-        temp = "Câu ví dụ:\n"
-        for e in examples[:3]:
-          temp += f"- {e}\n"
-        result.append(temp)
+        result.append("Câu ví dụ:\n" + "\n".join(f"- {e}" for e in examples[:3]))
       else:
         result.append("Không có ví dụ")
-
-      # Hypernyms (Từ nghĩa rộng)
-      hypernyms = set()
-      for hypernym in synset.hypernyms():
-        hypernyms.update(lemma.name() for lemma in hypernym.lemmas())
-      if hypernyms:
-        temp = "Từ nghĩa rộng (Hypernyms): "
-        temp += ", ".join(list(hypernyms)[:5])
-        result.append(temp)
-      else:
-        result.append("Không có từ nghĩa rộng")
-
-      # Từ liên quan (Related Words)
-      related_words = set()
-      for lemma in synset.lemmas():
-        for similar in lemma.similar_tos():
-          related_words.add(similar.name())
-        for derivation in lemma.derivationally_related_forms():
-          related_words.add(derivation.name())
-      if related_words:
-        temp = "Từ liên quan (Related Words): "
-        temp += ", ".join(list(related_words)[:5])
-        result.append(temp)
-      else:
-        result.append("Không có từ liên quan")
-
       result.append("")
 
-    return "\n".join(result)
+    return {"detailed_info": "\n".join(result), "image_url": image_url}
   except Exception as e:
     raise Exception(f"Lỗi khi lấy thông tin chi tiết: {str(e)}")
 
@@ -328,19 +296,17 @@ def save_detailed_info(word, detailed_info):
 
 @anvil.server.callable
 def get_detailed_info(word):
-  """Hàm lấy nghĩa chi tiết của từ từ cơ sở dữ liệu"""
   try:
     current_user = anvil.users.get_user()
     if not current_user:
       return None
-
     row = app_tables.vocab.get(Vocab=word, User=current_user)
-    if row and row['DetailedInfo']:
-      return row['DetailedInfo']
+    if row:
+      return {"detailed_info": row['DetailedInfo'], "image_url": row['ImageUrl']}
     return None
-  except Exception as e:
-    print(f"Lỗi khi lấy nghĩa chi tiết từ cơ sở dữ liệu cho từ '{word}': {str(e)}")
+  except:
     return None
+
 
 @anvil.server.callable
 def add_vocab(new_vocab_data):

@@ -55,7 +55,7 @@ class Home_page(Home_pageTemplate):
     self.relation_panel.clear()
     self.detail_label.text = "Chọn một từ hoặc câu để xem chi tiết."
     self.word_image.visible = False
-    self.column_panel_4.visible = False
+    self.search_result_panel.visible = False
   def _init_dropdown_(self):
     self.dropdown_items = [
       ("Đồng nghĩa", "synonyms"),
@@ -200,6 +200,7 @@ class Home_page(Home_pageTemplate):
       self.update_dropdown_options()
       self.update_relation_panel()
       self.update_word_details(self.current_word)
+      
 
   def update_dropdown_options(self):
     if not self.current_word or not self.word_relations_dict.get(self.current_word):
@@ -234,7 +235,7 @@ class Home_page(Home_pageTemplate):
     word = sender.tag.word
     self.current_word = word
     try:
-      result = anvil.server.call('process_input', [word], is_word=True)
+      result = anvil.server.call('process_input', [word], mode=True)
       if result["type"] == "word":
         if not any(result["relations"][word].values()):
           self.detail_label.text = "Không tìm thấy dữ liệu quan hệ cho từ này."
@@ -266,7 +267,7 @@ class Home_page(Home_pageTemplate):
     word = sender.tag.word
     self.current_word = word
     try:
-      result = anvil.server.call('process_input', [word], is_word=True)
+      result = anvil.server.call('process_input', [word], mode=True)
       if result["type"] == "word":
         if not any(result["relations"][word].values()):
           self.detail_label.text = "Không tìm thấy dữ liệu quan hệ cho từ này."

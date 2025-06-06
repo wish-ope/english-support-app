@@ -8,24 +8,17 @@ from anvil.tables import app_tables
 from ..User_form import User_form
 
 class WordRelations:
-  """Class để lưu trữ các mối quan hệ từ vựng"""
   def __init__(self, synonyms=None, antonyms=None, hyponyms=None, meronyms=None):
-    self.synonyms = synonyms if synonyms is not None else []
-    self.antonyms = antonyms if antonyms is not None else []
-    self.hyponyms = hyponyms if hyponyms is not None else []
-    self.meronyms = meronyms if meronyms is not None else []
+    self.synonyms = synonyms or []
+    self.antonyms = antonyms or []
+    self.hyponyms = hyponyms or []
+    self.meronyms = meronyms or []
 
   def get_relations(self, relation_type):
-    """Lấy dữ liệu dựa trên loại mối quan hệ"""
-    if relation_type == "synonyms":
-      return self.synonyms
-    elif relation_type == "antonyms":
-      return self.antonyms
-    elif relation_type == "hyponyms":
-      return self.hyponyms
-    elif relation_type == "meronyms":
-      return self.meronyms
-    return []
+    return getattr(self, relation_type, [])
+
+  def has_data(self, relation_type):
+    return bool(self.get_relations(relation_type))
 
   def has_data(self, relation_type):
     """Kiểm tra xem loại mối quan hệ có dữ liệu không"""
@@ -35,7 +28,9 @@ class Home_page(Home_pageTemplate):
   def __init__(self, **properties):
     # Khởi tạo giao diện
     self.init_components(**properties)
-
+    self.input_words = []
+    self.word_relations_dict = {}
+    self.current_word = None
     # Kiểm tra người dùng
     self._init_user()
 
@@ -62,14 +57,21 @@ class Home_page(Home_pageTemplate):
     self.word_image.visible = False
     self.column_panel_2.visible = False
   def _init_dropdown_(self):
-    self.category_dropdown.items = [
+    self.dropdown_items = [
       ("Đồng nghĩa", "synonyms"),
       ("Trái nghĩa", "antonyms"),
       ("Hyponyms", "hyponyms"),
       ("Meronyms", "meronyms")
     ]
+    self.category_dropdown.items = self.dropdown_items
     self.category_dropdown.selected_value = "synonyms"
     self.category_dropdown.add_event_handler('change', self.category_dropdown_change)
+
+    if not hasattr(self, 'word_dropdown'):
+      self.word_dropdown = DropDown(name="word_dropdown")
+      self.add_component(self.word_dropdown)
+    self.word_dropdown.items = []
+    self.word_dropdown.add_event_handler('change', self.word_dropdown_change)
 
   def _init_word_of_day_(self):
     try:
@@ -188,132 +190,138 @@ class Home_page(Home_pageTemplate):
 
   # hàm search nhiều từ cùng lúc
   # Như search câu nhưng hiện những từ theo thứ tự của dropdown
+  def update_word_dropdown(self):
+    self.word_dropdown.items = [(w, w) for w in self.input_words]
+    self.word_dropdown.selected_value = self.current_word
+
+  def word_dropdown_change(self, **event_args):
+    self.current_word = self.word_dropdown.selected_value
+    if self.current_word:
+      self.update_dropdown_options()
+      self.update_relation_panel()
+      self.update_word_details(self.current_word)
+
   def update_dropdown_options(self):
-    """Cập nhật trạng thái của dropdown dựa trên từ nhập vào"""
-    if not hasattr(self, 'word_relations'):
+    if not self.current_word or not self.word_relations_dict.get(self.current_word):
       self.category_dropdown.items = [("Không có dữ liệu", "none")]
+      self.category_dropdown.selected_value = "none"
       return
-
-    enabled_items = []
-    for text, value in [
-      ("Đồng nghĩa", "synonyms"),
-      ("Trái nghĩa", "antonyms"),
-      ("Hyponyms", "hyponyms"),
-      ("Meronyms", "meronyms")
-    ]:
-      if self.word_relations.has_data(value):
-        enabled_items.append((text, value))
-
-    if not enabled_items:
-      enabled_items = [("Không có dữ liệu", "none")]
-
-    self.category_dropdown.items = enabled_items
-    current_value = self.category_dropdown.selected_value
-    if current_value not in [item[1] for item in enabled_items]:
+    enabled_items = [(text, value) for text, value in self.dropdown_items
+                     if self.word_relations_dict[self.current_word].has_data(value)]
+    self.category_dropdown.items = enabled_items or [("Không có dữ liệu", "none")]
+    if self.category_dropdown.selected_value not in [item[1] for item in self.category_dropdown.items]:
       self.category_dropdown.selected_value = enabled_items[0][1] if enabled_items else "none"
       self.update_relation_panel()
 
   def update_relation_panel(self):
-    """Cập nhật panel mối quan hệ dựa trên lựa chọn trong dropdown"""
-    if not hasattr(self, 'current_word') or not hasattr(self, 'word_relations'):
-      return
-
     value = self.category_dropdown.selected_value
     self.clear_relations()
-
-    try:
-      if value == "none":
-        result = []
-      else:
-        result = self.word_relations.get_relations(value)
-
+    if self.current_word and value != "none" and self.current_word in self.word_relations_dict:
+      result = self.word_relations_dict[self.current_word].get_relations(value)
       if result:
-        for item in result:
-          link = Link(text=item, role="default", spacing_above="small", spacing_below="small")
-          link.tag.word = item
+        links = [Link(text=str(item), role="default", spacing_above="small", spacing_below="small")
+                 for item in result]
+        for link in links:
+          link.tag.word = link.text
           link.add_event_handler('click', self.result_word_click)
+        for link in links:
           self.relation_panel.add_component(link)
-      else:
-        self.relation_panel.add_component(Label(text="Không có dữ liệu cho loại này."))
-
-    except Exception as e:
-      self.relation_panel.add_component(Label(text=f"Lỗi: {str(e)}"))
 
   def category_dropdown_change(self, **event_args):
-    """Xử lý khi thay đổi lựa chọn trong dropdown, tự động cập nhật panel"""
-    if hasattr(self, 'word_relations'):
-      self.update_relation_panel()
-    else:
-      self.clear_relations()
-      self.relation_panel.add_component(Label(text="Vui lòng tìm kiếm trước!"))
+    self.update_relation_panel()
 
   def result_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ trong panel mối quan hệ"""
-    word = sender.tag.word
-    self.update_word_details(word)
-
-  def sentence_word_click(self, sender, **event_args):
-    """Xử lý khi nhấp vào một từ trong phân tích câu"""
     word = sender.tag.word
     self.current_word = word
-    # Gọi hàm tổng hợp trên server để xử lý từ
-    result = anvil.server.call('process_input', word)
+    try:
+      result = anvil.server.call('process_input', [word], is_word=True)
+      if result["type"] == "word":
+        if not any(result["relations"][word].values()):
+          self.detail_label.text = "Không tìm thấy dữ liệu quan hệ cho từ này."
+          self.clear_relations()
+          return
+        self.word_relations_dict[word] = WordRelations(
+          synonyms=result["relations"][word].get("synonyms", []),
+          antonyms=result["relations"][word].get("antonyms", []),
+          hyponyms=result["relations"][word].get("hyponyms", []),
+          meronyms=result["relations"][word].get("meronyms", [])
+        )
+        detailed_info_data = anvil.server.call('get_detailed_info', word)
+        if not detailed_info_data:
+          detailed_info_data = anvil.server.call('get_word_info', word)
+        anvil.server.call('save_word_data', word, result["relations"][word],
+                          detailed_info_data["detailed_info"], detailed_info_data["image_url"])
+        self.input_words.append(word)
+        self.update_word_dropdown()
+        self.update_dropdown_options()
+        self.update_relation_panel()
+        self.update_word_details(word)
+      else:
+        self.detail_label.text = "Từ không được xử lý đúng."
+        self.clear_relations()
+    except Exception as e:
+      alert(f"Lỗi khi xử lý từ: {str(e)}")
 
-    if result["type"] == "word":
-      self.word_relations = WordRelations(
-        synonyms=result["relations"]["synonyms"],
-        antonyms=result["relations"]["antonyms"],
-        hyponyms=result["relations"]["hyponyms"],
-        meronyms=result["relations"]["meronyms"]
-      )
-      self.update_word_details(word)
-      self.update_dropdown_options()
-      self.update_relation_panel()
-    else:
-      alert("Có lỗi xảy ra: Từ không được xử lý đúng!")
+  def sentence_word_click(self, sender, **event_args):
+    word = sender.tag.word
+    self.current_word = word
+    try:
+      result = anvil.server.call('process_input', [word], is_word=True)
+      if result["type"] == "word":
+        if not any(result["relations"][word].values()):
+          self.detail_label.text = "Không tìm thấy dữ liệu quan hệ cho từ này."
+          self.clear_relations()
+          return
+        self.word_relations_dict[word] = WordRelations(
+          synonyms=result["relations"][word].get("synonyms", []),
+          antonyms=result["relations"][word].get("antonyms", []),
+          hyponyms=result["relations"][word].get("hyponyms", []),
+          meronyms=result["relations"][word].get("meronyms", [])
+        )
+        detailed_info_data = anvil.server.call('get_detailed_info', word)
+        if not detailed_info_data:
+          detailed_info_data = anvil.server.call('get_word_info', word)
+        anvil.server.call('save_word_data', word, result["relations"][word],
+                          detailed_info_data["detailed_info"], detailed_info_data["image_url"])
+        self.input_words.append(word)
+        self.update_word_dropdown()
+        self.update_dropdown_options()
+        self.update_relation_panel()
+        self.update_word_details(word)
+      else:
+        self.detail_label.text = "Từ không được xử lý đúng."
+        self.clear_relations()
+    except Exception as e:
+      alert(f"Lỗi khi xử lý từ: {str(e)}")
 
   def update_word_details(self, word):
-    """Cập nhật thông tin chi tiết và hiển thị ảnh"""
+    if not word:
+      self.detail_label.text = "Không có từ hoặc cụm từ nào được chọn."
+      self.word_image.visible = False
+      return
     try:
-      detailed_info = anvil.server.call('get_detailed_info', word)
-      if detailed_info:
-        print(f"Lấy nghĩa chi tiết từ cơ sở dữ liệu cho từ '{word}'")
-      else:
-        print(f"Không tìm thấy nghĩa chi tiết cho từ '{word}' trong cơ sở dữ liệu, gọi server...")
-        detailed_info = anvil.server.call('get_word_info', word)
-        anvil.server.call('save_detailed_info', word, detailed_info)
-
-      lines = detailed_info.split('\n')
-      self.detail_label.text = "\n".join(line for line in lines if not line.startswith('**Ảnh minh họa:**'))
-
-      image_url_line = next((line for line in lines if line.startswith('**Ảnh minh họa:**')), None)
-      if image_url_line:
-        image_url = image_url_line.replace('**Ảnh minh họa:** ', '').strip()
-        if image_url != "Không tìm thấy ảnh" and image_url:
-          self.word_image.source = image_url
-          self.word_image.visible = True
-        else:
-          self.word_image.visible = False
+      detailed_info_data = anvil.server.call('get_detailed_info', word)
+      if not detailed_info_data:
+        detailed_info_data = anvil.server.call('get_word_info', word)
+      self.detail_label.text = detailed_info_data["detailed_info"]
+      image_url = detailed_info_data["image_url"]
+      self.word_image.source = image_url if image_url and image_url != "Không tìm thấy ảnh" else None
+      self.word_image.visible = bool(self.word_image.source)
     except Exception as e:
-      alert(f"Có lỗi khi lấy thông tin từ: {str(e)}")
+      self.detail_label.text = f"Có lỗi khi lấy thông tin chi tiết: {str(e)}"
+      self.word_image.visible = False
 
   def add_btn_click(self, **event_args):
-    """Xử lý khi nút thêm từ được nhấn"""
     vocab_input = self.input_text.text.strip()
     means_output = self.detail_label.text
-    if not vocab_input or not means_output or means_output == "Chọn một từ hoặc câu để xem chi tiết.":
-      alert("Vui lòng tìm kiếm và chọn một từ trước khi thêm!")
+    if not vocab_input or means_output == "Chọn một từ hoặc cụm từ để xem chi tiết.":
+      alert("Vui lòng tìm kiếm và chọn một từ hoặc cụm từ trước!")
       return
-
     try:
-      self.new_vocab_data = {
-        "vocab_input": vocab_input,
-        "means_output": means_output
-      }
-      anvil.server.call('add_vocab', self.new_vocab_data)
+      anvil.server.call('add_vocab', {"vocab_input": vocab_input, "means_output": means_output})
       alert("Thêm từ thành công!")
     except Exception as e:
-      alert(f"Có lỗi khi thêm từ: {str(e)}")
+      alert(f"Lỗi khi thêm từ: {str(e)}")
 
   def check_user_info(self):
     curr_user = anvil.users.get_user()

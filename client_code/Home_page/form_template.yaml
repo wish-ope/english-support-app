@@ -56,11 +56,11 @@ components_by_slot:
   - components:
     - components:
       - layout_properties: {grid_position: 'ZOXDGN,HKLZBC'}
-        name: category_dropdown
+        name: word_dropdown
         properties: {background: 'theme:Dark Overlay 1', role: outlined}
         type: DropDown
       - layout_properties: {grid_position: 'ZOXDGN,UHUFIB'}
-        name: drop_down_1
+        name: category_dropdown
         properties: {role: outlined}
         type: DropDown
       layout_properties: {grid_position: 'YMLHNL,EYMGGX'}

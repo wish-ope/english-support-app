@@ -15,7 +15,7 @@ components_by_slot:
       type: Label
     - layout_properties: {col_xs: 4, row: WFXTKH, width_xs: 3}
       name: email_label
-      properties: {}
+      properties: {text: email}
       type: Label
     - layout_properties: {col_xs: 3, row: OTJJRC, width_xs: 1}
       name: label_3

@@ -21,9 +21,9 @@ class WordRelations:
   def has_data(self, relation_type):
     return bool(self.get_relations(relation_type))
 
-  def has_data(self, relation_type):
-    """Kiểm tra xem loại mối quan hệ có dữ liệu không"""
-    return len(self.get_relations(relation_type)) > 0
+  # def has_data(self, relation_type):
+  #   """Kiểm tra xem loại mối quan hệ có dữ liệu không"""
+  #   return len(self.get_relations(relation_type)) > 0
 
 class Home_page(Home_pageTemplate):
   def __init__(self, **properties):

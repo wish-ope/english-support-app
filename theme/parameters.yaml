@@ -337,3 +337,5 @@ roles:
   name: box-shadow
 - components: [Label, ColumnPanel]
   name: scrollable-panel
+- components: [ColumnPanel]
+  name: scrollid

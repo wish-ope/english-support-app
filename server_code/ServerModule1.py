@@ -27,17 +27,21 @@ def get_image_url(word):
     return "Không tìm thấy ảnh"
 
 @anvil.server.callable
-def process_input(input_data, is_word=True):
+
+def process_input(input_data, mode = True):
+  """Hàm xử lý đầu vào: phân biệt từ/câu và trả về kết quả tương ứng"""
   if not input_data:
     raise ValueError("Văn bản nhập vào không hợp lệ")
-
-  if is_word:
+  
+  if mode:
     # Xử lý từ hoặc cụm từ
     if not isinstance(input_data, list):
       input_data = [input_data.strip()]
     words = [w.strip() for w in input_data if w.strip()]
     if not words:
       raise ValueError("Danh sách từ không hợp lệ")
+
+
 
     relations_dict = {}
     for word in words:
@@ -206,6 +210,34 @@ def get_word_data(word):
   except:
     return None
 
+# @anvil.server.callable
+# def save_detailed_info(word, detailed_info):
+#   """Hàm lưu nghĩa chi tiết của từ vào cơ sở dữ liệu"""
+#   try:
+#     current_user = anvil.users.get_user()
+#     if not current_user:
+#       print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
+#       return
+
+#     row = app_tables.vocab.get(Vocab=word, User=current_user)
+#     if row:
+#       # row.update(DetailedInfo=detailed_info, Means=detailed_info)
+#       return  # Từ đã tồn tại, bỏ qua.
+#     else:
+#       app_tables.vocab.add_row(
+#         Vocab=word,
+#         Synonyms=json.dumps([]),
+#         Antonyms=json.dumps([]),
+#         Hyponyms=json.dumps([]),
+#         Meronyms=json.dumps([]),
+#         Means=detailed_info,
+#         DetailedInfo=detailed_info,
+#         User=current_user
+#       )
+#     print(f"Đã lưu nghĩa chi tiết cho từ '{word}' vào cơ sở dữ liệu.")
+#   except Exception as e:
+#     print(f"Lỗi khi lưu nghĩa chi tiết cho từ '{word}': {str(e)}")
+
 @anvil.server.callable
 def get_detailed_info(word):
   try:
@@ -218,6 +250,7 @@ def get_detailed_info(word):
     return None
   except:
     return None
+
 
 @anvil.server.callable
 def add_vocab(new_vocab_data):

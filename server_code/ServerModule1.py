@@ -21,16 +21,12 @@ except Exception as e:
   raise Exception(f"Không thể tải mô hình ngôn ngữ hoặc WordNet: {str(e)}")
 
 def get_image_url(word):
-  """Hàm lấy URL ảnh minh họa từ Unsplash"""
   try:
     url = f"https://api.unsplash.com/search/photos?query={word}&per_page=1&client_id=xdz1FY6iYimqqxpSaE1KWgyW5LO6HphF-CHGI0Ty7mk"
     response = anvil.http.request(url, method="GET", json=True)
-    if response.get('results'):
-      return response['results'][0]['urls']['small']
-    return None
-  except Exception as e:
-    print(f"Lỗi khi lấy ảnh: {str(e)}")
-    return None
+    return response['results'][0]['urls']['small'] if response.get('results') else "Không tìm thấy ảnh"
+  except:
+    return "Không tìm thấy ảnh"
 
 @anvil.server.callable
 def process_input(input_data, mode = True):
@@ -168,42 +164,17 @@ def get_word_info(vocab_input):
 
 @anvil.server.callable
 def get_word_of_the_day():
-  """Hàm lấy từ của ngày từ cơ sở dữ liệu"""
   try:
     current_user = anvil.users.get_user()
     if not current_user:
-      print("Không có người dùng đăng nhập, lấy từ ngẫu nhiên từ WordNet.")
-      all_synsets = list(wn.all_synsets())
-      if not all_synsets:
-        raise Exception("Không thể lấy danh sách từ từ WordNet.")
-
-      random_synset = random.choice(all_synsets)
-      word = random_synset.lemma_names()[0].replace('_', ' ')
-      detailed_info = get_word_info(word)
-      return f"**Từ của ngày: {word}**\n\n{detailed_info}"
-
+      return "Không có người dùng đăng nhập."
     vocab_rows = app_tables.vocab.search(User=current_user)
     if not vocab_rows:
-      print("Không có từ nào trong cơ sở dữ liệu, lấy từ ngẫu nhiên từ WordNet.")
-      all_synsets = list(wn.all_synsets())
-      if not all_synsets:
-        raise Exception("Không thể lấy danh sách từ từ WordNet.")
+      return "Không có từ nào trong cơ sở dữ liệu."
 
-      random_synset = random.choice(all_synsets)
-      word = random_synset.lemma_names()[0].replace('_', ' ')
-      detailed_info = get_word_info(word)
-      return f"**Từ của ngày: {word}**\n\n{detailed_info}"
-
-    vocab_list = list(vocab_rows)
-    random_row = random.choice(vocab_list)
+    random_row = random.choice(list(vocab_rows))
     word = random_row['Vocab']
-    detailed_info = random_row['DetailedInfo']
-
-    if not detailed_info:
-      print(f"Không có DetailedInfo cho từ '{word}', lấy từ WordNet.")
-      detailed_info = get_word_info(word)
-      random_row.update(DetailedInfo=detailed_info)
-
+    detailed_info = random_row['DetailedInfo'] or get_word_info(word)["detailed_info"]
     return f"**Từ của ngày: {word}**\n\n{detailed_info}"
   except Exception as e:
     raise Exception(f"Lỗi khi lấy từ của ngày: {str(e)}")
@@ -241,12 +212,10 @@ def save_word_data(word, relations, detailed_info, image_url):
 
 @anvil.server.callable
 def get_word_data(word):
-  """Hàm lấy dữ liệu từ vựng từ cơ sở dữ liệu"""
   try:
     current_user = anvil.users.get_user()
     if not current_user:
       return None
-
     row = app_tables.vocab.get(Vocab=word, User=current_user)
     if row:
       return {
@@ -255,41 +224,39 @@ def get_word_data(word):
           "antonyms": json.loads(row['Antonyms']) if row['Antonyms'] else [],
           "hyponyms": json.loads(row['Hyponyms']) if row['Hyponyms'] else [],
           "meronyms": json.loads(row['Meronyms']) if row['Meronyms'] else []
-        },
-        "detailed_info": row['DetailedInfo']
+        }
       }
     return None
-  except Exception as e:
-    print(f"Lỗi khi lấy dữ liệu từ cơ sở dữ liệu cho từ '{word}': {str(e)}")
+  except:
     return None
 
-@anvil.server.callable
-def save_detailed_info(word, detailed_info):
-  """Hàm lưu nghĩa chi tiết của từ vào cơ sở dữ liệu"""
-  try:
-    current_user = anvil.users.get_user()
-    if not current_user:
-      print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
-      return
+# @anvil.server.callable
+# def save_detailed_info(word, detailed_info):
+#   """Hàm lưu nghĩa chi tiết của từ vào cơ sở dữ liệu"""
+#   try:
+#     current_user = anvil.users.get_user()
+#     if not current_user:
+#       print("Không có người dùng đăng nhập, không lưu vào cơ sở dữ liệu.")
+#       return
 
-    row = app_tables.vocab.get(Vocab=word, User=current_user)
-    if row:
-      # row.update(DetailedInfo=detailed_info, Means=detailed_info)
-      return  # Từ đã tồn tại, bỏ qua.
-    else:
-      app_tables.vocab.add_row(
-        Vocab=word,
-        Synonyms=json.dumps([]),
-        Antonyms=json.dumps([]),
-        Hyponyms=json.dumps([]),
-        Meronyms=json.dumps([]),
-        Means=detailed_info,
-        DetailedInfo=detailed_info,
-        User=current_user
-      )
-    print(f"Đã lưu nghĩa chi tiết cho từ '{word}' vào cơ sở dữ liệu.")
-  except Exception as e:
-    print(f"Lỗi khi lưu nghĩa chi tiết cho từ '{word}': {str(e)}")
+#     row = app_tables.vocab.get(Vocab=word, User=current_user)
+#     if row:
+#       # row.update(DetailedInfo=detailed_info, Means=detailed_info)
+#       return  # Từ đã tồn tại, bỏ qua.
+#     else:
+#       app_tables.vocab.add_row(
+#         Vocab=word,
+#         Synonyms=json.dumps([]),
+#         Antonyms=json.dumps([]),
+#         Hyponyms=json.dumps([]),
+#         Meronyms=json.dumps([]),
+#         Means=detailed_info,
+#         DetailedInfo=detailed_info,
+#         User=current_user
+#       )
+#     print(f"Đã lưu nghĩa chi tiết cho từ '{word}' vào cơ sở dữ liệu.")
+#   except Exception as e:
+#     print(f"Lỗi khi lưu nghĩa chi tiết cho từ '{word}': {str(e)}")
 
 @anvil.server.callable
 def get_detailed_info(word):
@@ -310,10 +277,10 @@ def add_vocab(new_vocab_data):
   """Hàm thêm từ vào bảng vocab"""
   try:
     current_user = anvil.users.get_user()
-    if current_user is not None:
+    if current_user:
       app_tables.vocab.add_row(
         Vocab=new_vocab_data["vocab_input"],
-        Means=new_vocab_data["means_output"],
+        DetailedInfo=new_vocab_data["means_output"],
         User=current_user
       )
   except Exception as e:
@@ -321,13 +288,10 @@ def add_vocab(new_vocab_data):
 
 @anvil.server.callable
 def update_user(first_name, last_name, phone):
-  """Hàm cập nhật thông tin người dùng"""
   try:
     curr_user = anvil.users.get_user()
     if curr_user:
-      curr_user['first_name'] = first_name
-      curr_user['last_name'] = last_name
-      curr_user['phone'] = phone
+      curr_user.update(first_name=first_name, last_name=last_name, phone=phone)
   except Exception as e:
     raise Exception(f"Lỗi khi cập nhật thông tin người dùng: {str(e)}")
 

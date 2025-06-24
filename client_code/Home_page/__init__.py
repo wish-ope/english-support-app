@@ -235,7 +235,7 @@ class Home_page(Home_pageTemplate):
     word = sender.tag.word
     self.current_word = word
     try:
-      result = anvil.server.call('process_input', [word], is_word=True)
+      result = anvil.server.call('process_input', [word], mode=True)
       if result["type"] == "word":
         if not any(result["relations"][word].values()):
           self.detail_label.text = "Không tìm thấy dữ liệu quan hệ cho từ này."

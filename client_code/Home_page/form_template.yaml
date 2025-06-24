@@ -2,7 +2,7 @@ components_by_slot:
   slot_1:
   - layout_properties: {}
     name: spacer_1
-    properties: {height: 101.60000610351562}
+    properties: {height: 101.60000610351562, visible: false}
     type: Spacer
   - components:
     - components:
@@ -47,11 +47,11 @@ components_by_slot:
       role: [border-radius, box-shadow]
       spacing_above: small
       spacing_below: small
-      visible: true
+      visible: false
     type: GridPanel
   - layout_properties: {}
     name: spacer_2
-    properties: {height: 33.39996337890625}
+    properties: {height: 33.39996337890625, visible: false}
     type: Spacer
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

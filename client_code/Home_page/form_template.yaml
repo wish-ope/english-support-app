@@ -29,7 +29,8 @@ components_by_slot:
           Search
         visible: false
       type: Button
-    - layout_properties: {grid_position: 'ATCKRX,AEICHS XQOGRQ,XKIEDP'}
+    - event_bindings: {click: add_btn_click}
+      layout_properties: {grid_position: 'ATCKRX,AEICHS XQOGRQ,XKIEDP'}
       name: add_btn
       properties:
         enabled: true

@@ -27,7 +27,6 @@ def get_image_url(word):
     return "Không tìm thấy ảnh"
 
 @anvil.server.callable
-
 def process_input(input_data, mode = True):
   """Hàm xử lý đầu vào: phân biệt từ/câu và trả về kết quả tương ứng"""
   if not input_data:

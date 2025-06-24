@@ -44,31 +44,16 @@ db_schema:
   vocab:
     client: search
     columns:
-    - admin_ui: {order: 0, width: 200}
+    - admin_ui: {width: 200}
       name: Vocab
+      type: string
+    - admin_ui: {order: 1, width: 417}
+      name: Means
       type: string
     - admin_ui: {order: 2, width: 200}
       name: User
       target: users
       type: link_single
-    - admin_ui: {order: 3, width: 200}
-      name: Synonyms
-      type: string
-    - admin_ui: {order: 4, width: 200}
-      name: Antonyms
-      type: string
-    - admin_ui: {order: 5, width: 200}
-      name: Hyponyms
-      type: string
-    - admin_ui: {order: 6, width: 200}
-      name: Meronyms
-      type: string
-    - admin_ui: {order: 7, width: 200}
-      name: DetailedInfo
-      type: string
-    - admin_ui: {order: 8, width: 200}
-      name: ImageUrl
-      type: string
     server: full
     title: Vocab
 dependencies: []

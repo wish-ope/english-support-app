@@ -1,13 +1,14 @@
 components:
 - components:
   - layout_properties: {col_xs: 5, row: BLVUWQ, width_xs: 2}
-    name: image_1
+    name: avatar_image
     properties: {border_radius: 50%, height: 127, role: null}
     type: Image
-  - layout_properties: {col_xs: 5, row: URNVIQ, width_xs: 2}
-    name: button_1
-    properties: {icon: 'fa:upload', italic: false, text: Avatar, underline: false}
-    type: Button
+  - event_bindings: {change: image_uploader_change}
+    layout_properties: {col_xs: 4, row: HYJVZT, width_xs: 4}
+    name: upload_avatar
+    properties: {role: elevated-button}
+    type: FileLoader
   - layout_properties: {col_xs: 2, row: WFXTKH, width_xs: 2}
     name: label_2
     properties: {align: right, bold: true, italic: true, text: 'First Name: '}
@@ -37,7 +38,8 @@ components:
     name: save_btn
     properties: {align: right, bold: true, text: Save}
     type: Button
-  - layout_properties: {col_xs: 10, row: RDUXZX, width_xs: 2}
+  - event_bindings: {click: cancel_btn_click}
+    layout_properties: {col_xs: 10, row: RDUXZX, width_xs: 2}
     name: cancel_btn
     properties: {align: left, bold: true, italic: false, text: Cancel}
     type: Button

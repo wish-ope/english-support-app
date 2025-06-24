@@ -289,7 +289,7 @@ roles:
   display_in_toolbox: true
   name: outlined-card
   title: Outlined Card
-- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel, TextBox, Button, DropDown]
+- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
   display_in_toolbox: false
   name: elevated-card
   title: Elevated Card
@@ -333,9 +333,6 @@ roles:
   name: input-error
 - components: [GridPanel]
   name: border-radius
-- components: [GridPanel, TextBox]
+- components: [GridPanel]
   name: box-shadow
-- components: [Label, ColumnPanel]
-  name: scrollable-panel
-- components: [ColumnPanel]
-  name: scrollid
+- {components: null, name: scrollable-panel}

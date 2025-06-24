@@ -266,22 +266,53 @@ def add_vocab(new_vocab_data):
     raise Exception(f"Lỗi khi thêm từ: {str(e)}")
 
 @anvil.server.callable
-def update_user(first_name, last_name, phone):
-  try:
-    curr_user = anvil.users.get_user()
-    if curr_user:
-      curr_user.update(first_name=first_name, last_name=last_name, phone=phone)
-  except Exception as e:
-    raise Exception(f"Lỗi khi cập nhật thông tin người dùng: {str(e)}")
+def update_user(avatar = None, first_name = None, last_name = None, phone = None):
+  curr_user = anvil.users.get_user()
+  if curr_user:
+    fields_to_update = {
+      'first_name' : first_name,
+      'last_name' : last_name,
+      'phone' : phone,
+      'user_avatar' : avatar
+    }
+    for key, value in fields_to_update.items():
+      if value:
+        curr_user[key] = value
+    
+    # if avatar and phone:
+    #   curr_user['first_name'] = first_name
+    #   curr_user['last_name'] = last_name
+    #   curr_user['phone'] = phone
+    #   curr_user['user_avatar'] = avatar
+
 
 @anvil.server.callable
 def get_curr_user_data():
-  try:
-    curr_user = anvil.users.get_user()
-    if curr_user:
-      return {
-        "first_name": curr_user['first_name'],
-        "last_name": curr_user['last_name']
-      }
-  except Exception as e:
-    raise Exception(f"Lỗi khi lấy thông tin người dùng: {str(e)}")
+  curr_user = anvil.users.get_user()
+  if curr_user:
+    return{
+      "first_name": curr_user['first_name'],
+      "last_name": curr_user['last_name']
+    }
+  return None
+# This is a server module. It runs on the Anvil server,
+# rather than in the user's browser.
+#
+# To allow anvil.server.call() to call functions here, we mark
+# them with @anvil.server.callable.
+# Here is an example - you can replace it with your own:
+#
+# @anvil.server.callable
+# def say_hello(name):
+#   print("Hello, " + name + "!")
+#   return 42
+#
+  # try:
+  #   curr_user = anvil.users.get_user()
+  #   if curr_user:
+  #     return {
+  #       "first_name": curr_user['first_name'],
+  #       "last_name": curr_user['last_name']
+  #     }
+  # except Exception as e:
+  #   raise Exception(f"Lỗi khi lấy thông tin người dùng: {str(e)}")

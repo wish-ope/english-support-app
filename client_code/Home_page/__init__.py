@@ -42,8 +42,12 @@ class Home_page(Home_pageTemplate):
 
   def _init_user(self):
     self.curr_user = anvil.users.get_user()
+    # Check người dùng đã nhập thông tin chưa
     self.check_user_info()
-    self.add_btn.visible = bool(self.curr_user)
+ 
+    if self.curr_user == None:
+      self.add_btn.visible = False
+
 
   def _init_defaults_(self):
     self.result_panel.clear()
@@ -327,7 +331,9 @@ class Home_page(Home_pageTemplate):
 
   def check_user_info(self):
     curr_user = anvil.users.get_user()
+    # Kiểm tra người dùng đã nhập thông tin chưa
     if curr_user and (not curr_user['first_name'] or not curr_user['last_name']):
+      # Biến tạm lưu thông tin người dùng
       self.new_user = {}
       self.save_clicked = alert(
         content=User_form(item=self.new_user),

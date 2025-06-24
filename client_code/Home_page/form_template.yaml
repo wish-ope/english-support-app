@@ -141,5 +141,10 @@ components_by_slot:
     name: search_result_panel
     properties: {}
     type: ColumnPanel
+  slot_2:
+  - layout_properties: {}
+    name: user_btn
+    properties: {text: ''}
+    type: Button
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

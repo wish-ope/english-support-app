@@ -32,6 +32,7 @@ class Profile(ProfileTemplate):
     self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
     self.email_label.text = current_user['email']
     self.phone_label.text = current_user['phone']
+    
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.new_user = {}

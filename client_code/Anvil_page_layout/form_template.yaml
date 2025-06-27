@@ -35,7 +35,7 @@ components:
         spacing_below: small
         wrap_on: mobile
       type: Link
-    layout_properties: {expand: false, width: 152.724951171875}
+    layout_properties: {expand: false, width: 158.0619755859375}
     name: flow_panel_1
     properties: {spacing_above: small, spacing_below: small}
     type: FlowPanel

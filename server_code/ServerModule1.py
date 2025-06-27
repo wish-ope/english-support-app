@@ -265,22 +265,25 @@ def add_vocab(new_vocab_data):
     raise Exception(f"Lỗi khi thêm từ: {str(e)}")
 
 @anvil.server.callable
-def update_user(first_name, last_name, phone):
-  try:
-    curr_user = anvil.users.get_user()
-    if curr_user:
-      curr_user.update(first_name=first_name, last_name=last_name, phone=phone)
-  except Exception as e:
-    raise Exception(f"Lỗi khi cập nhật thông tin người dùng: {str(e)}")
+def update_user(avatar = None, first_name = None, last_name = None, phone = None):
+  curr_user = anvil.users.get_user()
+  if curr_user:
+    fields_to_update = {
+      'first_name' : first_name,
+      'last_name' : last_name,
+      'phone' : phone,
+      'user_avatar' : avatar
+    }
+    for key, value in fields_to_update.items():
+      if value:
+        curr_user[key] = value
 
 @anvil.server.callable
 def get_curr_user_data():
-  try:
-    curr_user = anvil.users.get_user()
-    if curr_user:
-      return {
-        "first_name": curr_user['first_name'],
-        "last_name": curr_user['last_name']
-      }
-  except Exception as e:
-    raise Exception(f"Lỗi khi lấy thông tin người dùng: {str(e)}")
+  curr_user = anvil.users.get_user()
+  if curr_user:
+    return{
+      "first_name": curr_user['first_name'],
+      "last_name": curr_user['last_name']
+    }
+  return None

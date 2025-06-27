@@ -42,7 +42,7 @@ class Profile(ProfileTemplate):
       dismissible = False
     )
     if self.save_clicked:
-      self.layout.update_user()
+      # self.layout.update_user()
       self.update_user_profile()
 
 

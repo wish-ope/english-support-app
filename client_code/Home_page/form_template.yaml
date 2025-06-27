@@ -1,9 +1,5 @@
 components_by_slot:
   slot_1:
-  - layout_properties: {}
-    name: link_1
-    properties: {}
-    type: Link
   - components:
     - components:
       - event_bindings: {pressed_enter: input_text_pressed_enter}

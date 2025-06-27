@@ -146,5 +146,13 @@ components_by_slot:
     name: user_btn
     properties: {text: ''}
     type: Button
+  - layout_properties: {}
+    name: user
+    properties: {}
+    type: Link
+  - layout_properties: {}
+    name: image_1
+    properties: {height: 34}
+    type: Image
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

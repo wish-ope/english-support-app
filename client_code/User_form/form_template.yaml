@@ -4,10 +4,10 @@ components:
     name: image_1
     properties: {border_radius: 50%, height: 127, role: null}
     type: Image
-  - layout_properties: {col_xs: 5, row: URNVIQ, width_xs: 2}
-    name: button_1
-    properties: {icon: 'fa:upload', italic: false, text: Avatar, underline: false}
-    type: Button
+  - layout_properties: {col_xs: 5, row: RTMRXY, width_xs: 2}
+    name: file_loader_1
+    properties: {}
+    type: FileLoader
   - layout_properties: {col_xs: 2, row: WFXTKH, width_xs: 2}
     name: label_2
     properties: {align: right, bold: true, italic: true, text: 'First Name: '}

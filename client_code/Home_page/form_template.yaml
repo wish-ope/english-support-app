@@ -1,5 +1,9 @@
 components_by_slot:
   slot_1:
+  - layout_properties: {}
+    name: link_1
+    properties: {}
+    type: Link
   - components:
     - components:
       - event_bindings: {pressed_enter: input_text_pressed_enter}
@@ -141,18 +145,6 @@ components_by_slot:
     name: search_result_panel
     properties: {}
     type: ColumnPanel
-  slot_2:
-  - layout_properties: {}
-    name: user_btn
-    properties: {text: ''}
-    type: Button
-  - layout_properties: {}
-    name: user
-    properties: {}
-    type: Link
-  - layout_properties: {}
-    name: image_1
-    properties: {height: 34}
-    type: Image
+  slot_2: []
 is_package: true
 layout: {type: 'form:Anvil_page_layout'}

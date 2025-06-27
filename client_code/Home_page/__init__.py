@@ -353,4 +353,8 @@ class Home_page(Home_pageTemplate):
     """This method is called when the button is clicked"""
     self.mode = False
     self.update_btn_style()
+
+  def user_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    pass
   

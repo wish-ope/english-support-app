@@ -22,7 +22,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
       # Hiển thị nút bấm liên quan tới người dùng
       self.show_user_bth()
       # Update người dùng 
-      self.update_user()
+      # self.update_user()
   
           
           

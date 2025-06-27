@@ -22,10 +22,10 @@ class Profile(ProfileTemplate):
 
   def update_user_profile(self):
     current_user = anvil.users.get_user()
-    # if current_user['user_avatar']:
-    #   self.avatar_show.source = current_user['user_avatar']
-    # else:
-    #   self.avatar_show.source = "_/theme/picture/avatar.jpg"
+    if current_user['user_avatar']:
+      self.avatar_show.source = current_user['user_avatar']
+    else:
+      self.avatar_show.source = "_/theme/picture/OIP.jpeg"
     self.name_label.text = f"{current_user['first_name']} {current_user['last_name']}"
     self.email_label.text = current_user['email']
     self.phone_label.text = current_user['phone']

@@ -52,7 +52,3 @@ slots:
     index: 0
     set_layout_properties: {grid_position: 'KORYBW,XQDBCV'}
     target: {name: content_panel, type: container}
-  slot_2:
-    index: 0
-    set_layout_properties: {}
-    target: {name: navbar_links, type: container}

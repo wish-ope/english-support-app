@@ -21,24 +21,31 @@ components_by_slot:
       name: sentence_btn
       properties: {role: elevated-button, text: Sentence}
       type: Button
-    - data_bindings:
-      - {code: 'self.item['''']', property: spacing, writeback: false}
-      event_bindings: {click: search_btn_click}
-      layout_properties: {grid_position: 'ATCKRX,AEICHS QAXSTG,CPJQEO'}
-      name: search_btn
-      properties:
-        align: left
-        background: theme:Dark Overlay 1
-        enabled: true
-        font_size: null
-        icon: fa:search
-        role: elevated-button
-        spacing_above: none
-        spacing_below: none
-        text: |2+
+    - components:
+      - data_bindings: []
+        event_bindings: {click: search_btn_click}
+        layout_properties: {col_xs: 0, row: QVVOFT, width_xs: 3}
+        name: search_btn
+        properties:
+          align: left
+          background: theme:Dark Overlay 1
+          enabled: true
+          font_size: null
+          icon: fa:search
+          role: elevated-button
+          spacing:
+            margin: ['5', '55', null, null]
+            padding: [null, '7', null, '13']
+          spacing_above: none
+          spacing_below: none
+          text: |2+
 
-        visible: true
-      type: Button
+          visible: true
+        type: Button
+      layout_properties: {grid_position: 'ATCKRX,AEICHS SCAKUA,FRFEES'}
+      name: grid_panel_1
+      properties: {}
+      type: GridPanel
     - event_bindings: {click: add_btn_click}
       layout_properties: {grid_position: 'ATCKRX,AEICHS QAXSTG,REVDGW'}
       name: add_btn
@@ -48,8 +55,8 @@ components_by_slot:
         icon: fa:plus
         role: elevated-button
         spacing:
-          margin: [null, 36, null, 0]
-          padding: [0, 20, 0, null]
+          margin: ['5', '50', null, 0]
+          padding: [0, '15', 0, '15']
         text: ''
       type: Button
     layout_properties: {}
@@ -118,8 +125,8 @@ components_by_slot:
           background: theme:Dark Overlay 1
           role: elevated-card
           spacing:
-            margin: [0, null, null, null]
-            padding: [0, null, 105, null]
+            margin: ['17', null, null, null]
+            padding: [0, null, 82, null]
         type: ColumnPanel
       layout_properties: {grid_position: 'YMLHNL,ZPRBDA'}
       name: column_panel_3

@@ -38,18 +38,18 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.profile_btn.visible = True
     self.notebook_btn.visible = True
 
-  # def update_user(self):
-  #   current_user = anvil.users.get_user()
-  #   if current_user:
-  #     if current_user['user_avatar']:
-  #       # Nếu có, cập nhật avatar cho người dùng
-  #       self.avatar.source = current_user['user_avatar']
-  #     else:
-  #       # Nếu không có avatar, sử dụng hình ảnh mặc định
-  #       self.avatar.source = "_/theme/picture/avatar.jpg"
-  #     # Cập nhật tên người dùng
-  #     self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
-  # # function login when click button
+  def update_user(self):
+    current_user = anvil.users.get_user()
+    if current_user:
+      if current_user['user_avatar']:
+        # Nếu có, cập nhật avatar cho người dùng
+        self.avatar.source = current_user['user_avatar']
+      else:
+        # Nếu không có avatar, sử dụng hình ảnh mặc định
+        self.avatar.source = "_/theme/picture/avatar.jpg"
+      # Cập nhật tên người dùng
+      self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
+  # function login when click button
   def login_button_click(self, **event_args):
     anvil.users.login_with_form(allow_cancel=True, allow_remembered = True)
     self.curr_user = anvil.users.get_user()

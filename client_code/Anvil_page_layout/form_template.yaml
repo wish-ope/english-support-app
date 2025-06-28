@@ -3,24 +3,32 @@ components:
   - components:
     - components:
       - layout_properties: {grid_position: 'EZZQNJ,VYXERJ'}
-        name: label_1
-        properties: {}
+        name: user_name
+        properties:
+          spacing:
+            padding: ['4', null, null, null]
         type: Label
-      - layout_properties: {grid_position: 'EZZQNJ,FIDOCF'}
+      - layout_properties: {grid_position: 'EZZQNJ,XARTOW'}
         name: image_1
-        properties: {height: 35.19996643066406}
+        properties:
+          border_radius: '20'
+          height: 30
+          margin: ['10', '0', null, '3']
         type: Image
       layout_properties: {}
-      name: link_1
+      name: user
       properties:
         col_spacing: medium
-        col_widths: '{"VYXERJ":40,"FIDOCF":20}'
+        col_widths: '{"VYXERJ":50,"XARTOW":20}'
         spacing:
-          padding: ['0', null, '0', null]
+          margin: ['1', null, '6', null]
+          padding: ['0', 7, '0', null]
       type: Link
-    layout_properties: {width: 182.0879267578125}
+    layout_properties: {width: 178.624951171875}
     name: flow_panel_1
-    properties: {}
+    properties:
+      spacing:
+        margin: [0, null, 0, null]
     type: FlowPanel
   - event_bindings: {click: logout_button_click}
     layout_properties: {}

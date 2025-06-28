@@ -57,6 +57,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.curr_user = anvil.users.get_user()
     if self.curr_user is not None:
       self.show_user_bth()
+      self.update_user()
       open_form('Home_page')
       
     

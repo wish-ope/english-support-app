@@ -2,9 +2,12 @@ components:
 - components:
   - components:
     - components:
-      - layout_properties: {grid_position: 'EZZQNJ,VYXERJ'}
+      - data_bindings: []
+        layout_properties: {grid_position: 'EZZQNJ,VYXERJ'}
         name: user_name
         properties:
+          font: Montserrat, Roboto, Noto, Arial, sans-serif
+          role: title
           spacing:
             padding: ['4', null, null, null]
         type: Label
@@ -15,6 +18,7 @@ components:
           height: 30
           margin: ['10', '0', null, '3']
         type: Image
+      event_bindings: {click: user_click}
       layout_properties: {}
       name: user
       properties:

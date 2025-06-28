@@ -46,7 +46,7 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
         self.avatar.source = current_user['user_avatar']
       else:
         # Nếu không có avatar, sử dụng hình ảnh mặc định
-        self.avatar.source = "_/theme/picture/avatar.jpg"
+        self.avatar.source = "_/theme/picture/OIP.jpeg"
       # Cập nhật tên người dùng
       self.user_name.text = f"{current_user['first_name']} {current_user['last_name']}"
   # function login when click button
@@ -90,6 +90,10 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
   def button_1_click(self, **event_args):
     """This method is called when the button is clicked"""
     pass
+
+  def user_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    open_form('Profile')
 
  
     

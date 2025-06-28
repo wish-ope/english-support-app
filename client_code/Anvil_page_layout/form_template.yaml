@@ -9,7 +9,7 @@ components:
             padding: ['4', null, null, null]
         type: Label
       - layout_properties: {grid_position: 'EZZQNJ,XARTOW'}
-        name: image_1
+        name: avatar
         properties:
           border_radius: '20'
           height: 30

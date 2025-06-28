@@ -31,12 +31,14 @@ class Anvil_page_layout(Anvil_page_layoutTemplate):
     self.logout_button.visible = False
     self.profile_btn.visible = False
     self.notebook_btn.visible = False
+    self.user.visible = False
     
   def show_user_bth(self, **event_args):
     self.login_button.visible = False
     self.logout_button.visible = True
     self.profile_btn.visible = True
     self.notebook_btn.visible = True
+    self.user.visible = True
 
   def update_user(self):
     current_user = anvil.users.get_user()

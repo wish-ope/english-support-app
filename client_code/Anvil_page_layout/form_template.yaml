@@ -7,7 +7,7 @@ components:
         name: user_name
         properties:
           font: Montserrat, Roboto, Noto, Arial, sans-serif
-          role: title
+          role: null
           spacing:
             padding: ['4', null, null, null]
         type: Label

@@ -15,7 +15,10 @@ class User_form(User_formTemplate):
     self.selected_avatar = None
     current_user = anvil.users.get_user()
 
-    self.avatar_image.source = current_user['user_avatar']
+    if current_user['user_avatar']:
+      self.avatar_image.source = current_user['user_avatar']
+    else:
+      self.avatar_image.source = "_/theme/picture/OIP.jpeg"
     self.firstName_input.text = current_user['first_name']
     self.lastName_input.text = current_user['last_name']
     self.phone_input.text = current_user['phone']

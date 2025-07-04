@@ -19,3 +19,4 @@ class NoteBook(NoteBookTemplate):
         User=current_user
       )
 
+

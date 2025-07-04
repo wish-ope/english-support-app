@@ -1,12 +1,16 @@
 components:
 - components:
-  - layout_properties: {col_xs: 0, row: ZIRYPK, width_xs: 3}
-    name: label_1
-    properties: {text: hello}
+  - data_bindings:
+    - {code: 'self.item[''Vocab'']', property: text, writeback: false}
+    layout_properties: {col_xs: 1, row: ZIRYPK, width_xs: 3}
+    name: label_vocab
+    properties: {text: ''}
     type: Label
-  - layout_properties: {col_xs: 5, row: ZIRYPK, width_xs: 3}
-    name: label_2
-    properties: {text: xin chào}
+  - data_bindings:
+    - {code: 'self.item[''DetailedInfo'']', property: text, writeback: false}
+    layout_properties: {col_xs: 6, row: ZIRYPK, width_xs: 3}
+    name: label_means
+    properties: {text: ''}
     type: Label
   layout_properties: {}
   name: grid_panel_1

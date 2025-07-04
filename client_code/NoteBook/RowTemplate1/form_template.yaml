@@ -1,5 +1,20 @@
-components: []
+components:
+- components:
+  - layout_properties: {col_xs: 2, row: ZIRYPK, width_xs: 3}
+    name: label_1
+    properties: {text: hello}
+    type: Label
+  - layout_properties: {col_xs: 7, row: ZIRYPK, width_xs: 3}
+    name: label_2
+    properties: {text: xin chào}
+    type: Label
+  layout_properties: {}
+  name: grid_panel_1
+  properties: {}
+  type: GridPanel
 container:
-  properties: {italic: false, visible: true}
+  data_bindings: []
+  event_bindings: {refreshing_data_bindings: form_refreshing_data_bindings}
+  properties: {bold: false, italic: false, visible: true}
   type: DataRowPanel
 is_package: true
